@@ -79,7 +79,7 @@ namespace CatSub.Cat
         /// <summary>
         /// Updates death persistant save data for situations like win, or force quit etc.
         /// </summary>
-        protected internal virtual void UpdatePersSaveData(ref SaveDataTable table, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        protected internal virtual void UpdatePersSaveData(ref SaveDataTable table, DeathPersistentSaveData data, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
         }
 

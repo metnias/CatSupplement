@@ -135,7 +135,7 @@ namespace CatSub.Story
         {
             if (persDataTable.TryGetValue(self, out var saveData))
             {
-                UpdatePersSaveData(ref saveData, saveAsIfPlayerDied, saveAsIfPlayerQuit);
+                UpdatePersSaveData(ref saveData, self, saveAsIfPlayerDied, saveAsIfPlayerQuit);
 
                 var saveDataPos = -1;
                 for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
@@ -151,11 +151,11 @@ namespace CatSub.Story
             return orig(self, saveAsIfPlayerDied, saveAsIfPlayerQuit);
         }
 
-        private static void UpdatePersSaveData(ref SaveDataTable persData, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        private static void UpdatePersSaveData(ref SaveDataTable persData, DeathPersistentSaveData data, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
             var slugcat = persData.GetValue<SlugName>(PERSSLUGCAT);
             if (SubRegistry.TryGetPrototype(slugcat, out CatSupplement sub))
-                sub.UpdatePersSaveData(ref persData, saveAsIfPlayerDied, saveAsIfPlayerQuit);
+                sub.UpdatePersSaveData(ref persData, data, saveAsIfPlayerDied, saveAsIfPlayerQuit);
         }
 
         private static void PersDataFromStringPatch(On.DeathPersistentSaveData.orig_FromString orig, DeathPersistentSaveData self, string s)
