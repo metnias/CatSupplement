@@ -30,7 +30,7 @@ namespace CatSub
     {
         public const string PLUGIN_ID = "com.rainworldgame.topicular.catsupplement.plugin";
         public const string PLUGIN_NAME = "CatSupplement";
-        public const string PLUGIN_VERSION = "1.0.0.0";
+        public const string PLUGIN_VERSION = "1.0.0.1";
 
         public void OnEnable()
         {

@@ -79,6 +79,9 @@
     <PostBuildEvent>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\StreamingAssets\mods\catsupplement\plugins\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "D:\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\StreamingAssets\mods\catsupplement\plugins\$(TargetName).xml"
 copy /Y "$(TargetDir)modinfo.json" "D:\SteamLibrary\steamapps\common\Rain World\RainWorld_Data\StreamingAssets\mods\catsupplement\modinfo.json"
+
+copy /Y "$(TargetPath)" "C:\Drive\Repo\References\RWDownpour\$(TargetName).dll"
+copy /Y "$(TargetDir)$(TargetName).xml" "C:\Drive\Repo\References\RWDownpour\$(TargetName).xml"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
