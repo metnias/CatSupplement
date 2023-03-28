@@ -7,9 +7,9 @@ namespace CatSupplement
 {
     public abstract class CatDecoration
     {
-        public CatDecoration(AbstractCreature owner)
+        public CatDecoration(Player player)
         {
-            this.owner = owner;
+            this.owner = player.abstractCreature;
         }
 
         public readonly AbstractCreature owner;

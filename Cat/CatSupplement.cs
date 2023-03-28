@@ -4,10 +4,11 @@ namespace CatSupplement
 {
     public abstract class CatSupplement
     {
-        public CatSupplement(AbstractCreature owner)
+        public CatSupplement(Player player)
         {
-            this.owner = owner;
+            this.owner = player.abstractCreature;
         }
+
 
         public readonly AbstractCreature owner;
         public Player self => owner.realizedCreature as Player;
@@ -26,6 +27,11 @@ namespace CatSupplement
         {
             orig(self);
             soundLoop?.Destroy();
+        }
+
+        protected internal virtual string Tutorial()
+        {
+            return "";
         }
     }
 }
