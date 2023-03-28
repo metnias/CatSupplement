@@ -1,8 +1,7 @@
-﻿using CatSub.Cat;
-using CatSub.Story;
+﻿using CatSub.Story;
 using System;
 
-namespace CatSub
+namespace CatSub.Cat
 {
     public abstract class CatSupplement
     {
@@ -60,10 +59,9 @@ namespace CatSub
         }
 
         /// <summary>
-        /// Creates new save data dependent to <see cref="SaveState"/>,
+        /// Creates new save data dependent to <see cref="SaveState.miscWorldSaveData"/>,
         /// and is wiped by death or quit.
         /// </summary>
-        /// <param name="table"></param>
         protected internal virtual SaveDataTable AppendNewProgSaveData()
         {
             return new SaveDataTable();
@@ -79,10 +77,9 @@ namespace CatSub
         }
 
         /// <summary>
-        /// Creates new save data dependent to <see cref="SaveState.miscWorldSaveData"/>,
-        /// 
+        /// Creates new save data dependent to <see cref="PlayerProgression.MiscProgressionData"/>,
+        /// which stays with new runs or different campaign, and only gets wiped by resetting save slot
         /// </summary>
-        /// <param name="table"></param>
         protected internal virtual SaveDataTable AppendNewMiscSaveData()
         {
             return new SaveDataTable();

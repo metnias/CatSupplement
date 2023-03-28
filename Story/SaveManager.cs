@@ -12,13 +12,13 @@ namespace CatSub.Story
     {
         internal static void Patch()
         {
-            progDataTable = new ConditionalWeakTable<SaveState, SaveDataTable>();
+            progDataTable = new ConditionalWeakTable<MiscWorldSaveData, SaveDataTable>();
             persDataTable = new ConditionalWeakTable<DeathPersistentSaveData, SaveDataTable>();
             miscDataTable = new ConditionalWeakTable<MiscProgressionData, SaveDataTable>();
 
-            On.SaveState.ctor += ProgDataCtorPatch;
-            On.SaveState.SaveToString += ProgDataToStringPatch;
-            On.SaveState.LoadGame += ProgDataFromStringPatch;
+            On.MiscWorldSaveData.ctor += ProgDataCtorPatch;
+            On.MiscWorldSaveData.ToString += ProgDataToStringPatch;
+            On.MiscWorldSaveData.FromString += ProgDataFromStringPatch;
 
             On.DeathPersistentSaveData.ctor += PersDataCtorPatch;
             On.DeathPersistentSaveData.SaveToString += PersDataToStringPatch;
@@ -63,19 +63,17 @@ namespace CatSub.Story
 
         #region ProgData
 
-        private static ConditionalWeakTable<SaveState, SaveDataTable> progDataTable;
+        private static ConditionalWeakTable<MiscWorldSaveData, SaveDataTable> progDataTable;
 
-        private static void ProgDataCtorPatch(On.SaveState.orig_ctor orig, SaveState self, SlugcatStats.Name saveStateNumber, PlayerProgression progression)
+        private static void ProgDataCtorPatch(On.MiscWorldSaveData.orig_ctor orig, MiscWorldSaveData self, SlugName saveStateNumber)
         {
-            orig(self, saveStateNumber, progression);
-
-            //if (saveStateNumber != PlanterEnums.SlugPlanter) return;
+            orig(self, saveStateNumber);
 
             SaveDataTable prog = CreateNewProgSaveData(saveStateNumber);
             progDataTable.Add(self, prog);
         }
 
-        private static string ProgDataToStringPatch(On.SaveState.orig_SaveToString orig, SaveState self)
+        private static string ProgDataToStringPatch(On.MiscWorldSaveData.orig_ToString orig, MiscWorldSaveData self)
         {
             if (progDataTable.TryGetValue(self, out var saveData))
             {
@@ -93,9 +91,9 @@ namespace CatSub.Story
             return orig(self);
         }
 
-        private static void ProgDataFromStringPatch(On.SaveState.orig_LoadGame orig, SaveState self, string str, RainWorldGame game)
+        private static void ProgDataFromStringPatch(On.MiscWorldSaveData.orig_FromString orig, MiscWorldSaveData self, string s)
         {
-            orig(self, str, game);
+            orig(self, s);
 
             if (!progDataTable.TryGetValue(self, out var saveData)) return;
 
@@ -110,10 +108,10 @@ namespace CatSub.Story
                 saveData.FromString(self.unrecognizedSaveStrings[saveDataPos]);
         }
 
-        internal static T GetProgValue<T>(SaveState data, string key)
+        public static T GetProgValue<T>(MiscWorldSaveData data, string key)
             => progDataTable.TryGetValue(data, out var table) ? table.GetValue<T>(key) : default;
 
-        internal static void SetProgValue<T>(SaveState data, string key, T value)
+        public static void SetProgValue<T>(MiscWorldSaveData data, string key, T value)
         { if (progDataTable.TryGetValue(data, out var table)) table.SetValue(key, value); }
 
         #endregion ProgData
@@ -175,10 +173,10 @@ namespace CatSub.Story
                 saveData.FromString(self.unrecognizedSaveStrings[saveDataPos]);
         }
 
-        internal static T GetPersValue<T>(DeathPersistentSaveData data, string key)
+        public static T GetPersValue<T>(DeathPersistentSaveData data, string key)
             => persDataTable.TryGetValue(data, out var table) ? table.GetValue<T>(key) : default;
 
-        internal static void SetPersValue<T>(DeathPersistentSaveData data, string key, T value)
+        public static void SetPersValue<T>(DeathPersistentSaveData data, string key, T value)
         { if (persDataTable.TryGetValue(data, out var table)) table.SetValue(key, value); }
 
         #endregion PersData
@@ -233,10 +231,10 @@ namespace CatSub.Story
             AppendNewMiscSaveData(ref saveData);
         }
 
-        internal static T GetMiscValue<T>(MiscProgressionData data, string key)
+        public static T GetMiscValue<T>(MiscProgressionData data, string key)
             => miscDataTable.TryGetValue(data, out var table) ? table.GetValue<T>(key) : default;
 
-        internal static void SetMiscValue<T>(MiscProgressionData data, string key, T value)
+        public static void SetMiscValue<T>(MiscProgressionData data, string key, T value)
         { if (miscDataTable.TryGetValue(data, out var table)) table.SetValue(key, value); }
 
         #endregion MiscData
