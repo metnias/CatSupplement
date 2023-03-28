@@ -3,10 +3,10 @@ using RWCustom;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static CatSupplement.Story.StoryRegistry;
+using static CatSub.Story.StoryRegistry;
 using SlugName = SlugcatStats.Name;
 
-namespace CatSupplement.Cat
+namespace CatSub.Cat
 {
     internal static class AppendCatSub
     {

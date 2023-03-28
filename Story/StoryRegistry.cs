@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SlugName = SlugcatStats.Name;
 
-namespace CatSupplement.Story
+namespace CatSub.Story
 {
     public static class StoryRegistry
     {

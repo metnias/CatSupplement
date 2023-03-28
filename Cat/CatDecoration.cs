@@ -1,10 +1,10 @@
-﻿using CatSupplement.Cat;
+﻿using CatSub.Cat;
 using RWCustom;
 using System;
 using UnityEngine;
 using static PlayerGraphics;
 
-namespace CatSupplement
+namespace CatSub
 {
     public abstract class CatDecoration
     {

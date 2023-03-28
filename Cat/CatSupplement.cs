@@ -1,8 +1,8 @@
-﻿using CatSupplement.Cat;
-using CatSupplement.Story;
+﻿using CatSub.Cat;
+using CatSub.Story;
 using System;
 
-namespace CatSupplement
+namespace CatSub
 {
     public abstract class CatSupplement
     {

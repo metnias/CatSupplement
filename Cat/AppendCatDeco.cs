@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CatSupplement.Cat
+namespace CatSub.Cat
 {
     public static class AppendCatDeco
     {

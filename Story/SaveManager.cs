@@ -1,4 +1,4 @@
-﻿using CatSupplement.Cat;
+﻿using CatSub.Cat;
 using Menu.Remix;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -6,7 +6,7 @@ using System.Text;
 using MiscProgressionData = PlayerProgression.MiscProgressionData;
 using SlugName = SlugcatStats.Name;
 
-namespace CatSupplement.Story
+namespace CatSub.Story
 {
     public static class SaveManager
     {

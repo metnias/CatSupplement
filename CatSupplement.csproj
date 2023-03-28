@@ -7,7 +7,7 @@
     <ProjectGuid>{2FDB1B32-FC41-4255-A70D-EA8B824C188D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CatSupplement</RootNamespace>
+    <RootNamespace>CatSub</RootNamespace>
     <AssemblyName>CatSupplement</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

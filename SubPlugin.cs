@@ -3,11 +3,11 @@ using System;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Security;
-using CatSupplement;
+using CatSub;
 using BepInEx.Logging;
 using UnityEngine;
-using CatSupplement.Cat;
-using CatSupplement.Story;
+using CatSub.Cat;
+using CatSub.Story;
 
 #region Assembly attributes
 
@@ -22,9 +22,8 @@ using CatSupplement.Story;
 
 #endregion Assembly attributes
 
-namespace CatSupplement
+namespace CatSub
 {
-
     [BepInPlugin(PLUGIN_ID, PLUGIN_NAME, PLUGIN_VERSION)]
     [BepInProcess("RainWorld.exe")]
     public class SubPlugin : BaseUnityPlugin
