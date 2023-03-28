@@ -9,20 +9,24 @@ namespace CatSupplement
 {
     public static class SubRegistry
     {
-        private static readonly Dictionary<SlugName, CatSupplement> CatSubs
+        private static readonly Dictionary<SlugName, CatSupplement> CatSubPrototype
             = new Dictionary<SlugName, CatSupplement>();
 
-        public static void RegisterSupplement(SlugName slug, CatSupplement value)
+        private static readonly Dictionary<SlugName, Func<Player, CatSupplement>> CatSubFactory
+            = new Dictionary<SlugName, Func<Player, CatSupplement>>();
+
+        public static void RegisterSupplement(SlugName slug, CatSupplement instance)
         {
-            if (CatSubs.ContainsKey(slug)) return;
-            CatSubs.Add(slug, value);
+            if (CatSubPrototype.ContainsKey(slug)) return;
+            CatSubPrototype.Add(slug, instance);
+            CatSubFactory.Add(slug, (player) => (CatSupplement)Activator.CreateInstance(instance.GetType(), player));
         }
 
-        internal static bool TryGetSupplement(Player player, out CatSupplement sub)
+        internal static bool TryCreateSupplement(Player player, out CatSupplement sub)
         {
             sub = null;
-            if (!CatSubs.TryGetValue(player.SlugCatClass, out sub)) return false;
-
+            if (!CatSubFactory.TryGetValue(player.SlugCatClass, out var func)) return false;
+            sub = func.Invoke(player);
             return true;
         }
 

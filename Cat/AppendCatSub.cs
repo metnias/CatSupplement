@@ -92,8 +92,8 @@ namespace CatSupplement.Cat
             orig(self, abstractCreature, world);
             if (TryGetSub(abstractCreature, out var _)) return;
 
-            if (!SubRegistry.TryGetSupplement(self, out var sub)) return;
-            catSubs.Add(self.abstractCreature, (CatSupplement)Activator.CreateInstance(sub.GetType(), self));
+            if (SubRegistry.TryCreateSupplement(self, out var sub))
+                catSubs.Add(self.abstractCreature, (CatSupplement)Activator.CreateInstance(sub.GetType(), self));
 
             //catSubs.Add(self.abstractCreature, new PlanterCatSupplement(self.abstractCreature));
             //catDecos.Add(self.abstractCreature, new PlanterCatDecoration(self.abstractCreature));
