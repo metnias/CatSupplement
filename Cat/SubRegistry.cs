@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SlugName = SlugcatStats.Name;
 
-namespace CatSupplement
+namespace CatSupplement.Cat
 {
     public static class SubRegistry
     {

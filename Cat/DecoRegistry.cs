@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using SlugName = SlugcatStats.Name;
 
-namespace CatSupplement
+namespace CatSupplement.Cat
 {
     public static class DecoRegistry
     {

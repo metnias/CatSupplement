@@ -1,4 +1,5 @@
-﻿using Menu;
+﻿using CatSupplement.Story;
+using Menu;
 using RWCustom;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +23,28 @@ namespace CatSupplement.Cat
         private static SlugName[] AppendTimelineOrder(On.SlugcatStats.orig_getSlugcatTimelineOrder orig)
         {
             LinkedList<SlugName> list = new LinkedList<SlugName>(orig());
-            //var yellow = list.Find(SlugName.Yellow);
-            //list.AddAfter(yellow, SlugPlanter);
+            var queue = StoryRegistry.GetTimelinePointers();
+            int search = 0;
+            while (queue.Count > 0)
+            {
+                var p = queue.Dequeue();
+                for (int i = 0; i < p.pivots.Length; ++i) {
+                    var node = list.Find(p.pivots[i]);
+                    if (node != null)
+                    {
+                        if (p.order == TimelinePointer.Relative.Before)
+                            list.AddBefore(node, p.name);
+                        else
+                            list.AddAfter(node, p.name);
+                        ++search;
+                        goto LoopEnd;
+                    }
+                }
+                if (p.search > search) continue;
+                p.search = search + 1;
+                queue.Enqueue(p); // re-search
+            LoopEnd: continue;
+            }
             return list.ToArray();
         }
 
