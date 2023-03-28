@@ -22,11 +22,18 @@ namespace CatSupplement
             CatSubFactory.Add(slug, (player) => (CatSupplement)Activator.CreateInstance(instance.GetType(), player));
         }
 
-        internal static bool TryCreateSupplement(Player player, out CatSupplement sub)
+        public static bool TryCreateSupplement(Player player, out CatSupplement sub)
         {
             sub = null;
             if (!CatSubFactory.TryGetValue(player.SlugCatClass, out var func)) return false;
-            sub = func.Invoke(player);
+            sub = func(player);
+            return true;
+        }
+
+        public static bool TryGetProtoType(SlugName name, out CatSupplement sub)
+        {
+            sub = null;
+            if (!CatSubPrototype.TryGetValue(name, out sub)) return false;
             return true;
         }
 

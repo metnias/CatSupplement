@@ -12,6 +12,8 @@ namespace CatSupplement
             this.owner = player.abstractCreature;
         }
 
+        public CatDecoration() { }
+
         public readonly AbstractCreature owner;
         public Player player => owner.realizedCreature as Player;
         public PlayerGraphics self => player.graphicsModule as PlayerGraphics;

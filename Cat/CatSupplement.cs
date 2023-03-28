@@ -9,6 +9,7 @@ namespace CatSupplement
             this.owner = player.abstractCreature;
         }
 
+        public CatSupplement() { }
 
         public readonly AbstractCreature owner;
         public Player self => owner.realizedCreature as Player;
@@ -29,7 +30,7 @@ namespace CatSupplement
             soundLoop?.Destroy();
         }
 
-        protected internal virtual string Tutorial()
+        protected internal virtual string ControlTutorial()
         {
             return "";
         }
