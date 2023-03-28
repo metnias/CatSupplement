@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using SlugName = SlugcatStats.Name;
 
 namespace CatSub.Cat
@@ -22,28 +19,49 @@ namespace CatSub.Cat
         private readonly static ConditionalWeakTable<PlayerState, CatSupplement> CatSubs
             = new ConditionalWeakTable<PlayerState, CatSupplement>();
 
-        internal static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatSupplement, new()
+        /// <summary>
+        /// Register constructor so that this mod will append this to player instances automatically.
+        /// </summary>
+        /// <param name="name"><see cref="SlugcatStats.Name"/> to append</param>
+        /// <param name="factory"><c>state => new ExampleCatSupplement(state)</c></param>
+        public static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatSupplement, new()
         {
             CatSubPrototype.Add(name, new T());
             CatSubFactory.Add(name, factory);
+        }
+
+        public static void Unregister(SlugName name)
+        {
+            CatSubPrototype.Remove(name);
+            CatSubFactory.Remove(name);
         }
 
         public static void AddSub(PlayerState state)
         {
             if (!CatSubs.TryGetValue(state, out _)
                 && state.creature.realizedObject is Player player
-                && CatSubFactory.TryGetValue(player.SlugCatClass, out var factory))
+                && TryMakeSub(player, out CatSupplement sub))
+                CatSubs.Add(state, sub);
+        }
+
+        public static bool TryMakeSub<T>(Player player, out T sub) where T : CatSupplement
+        {
+            sub = default;
+            if (CatSubFactory.TryGetValue(player.SlugCatClass, out var factory))
             {
-                CatSubs.Add(state, factory(player));
+                var genericSub = factory(player);
+                if (genericSub is T)
+                { sub = genericSub as T; return true; }
             }
+            return false;
         }
 
         public static bool TryGetSub<T>(PlayerState state, out T sub) where T : CatSupplement
         {
-            if (CatSubs.TryGetValue(state, out var genericSup)
-                && genericSup is T specificSup)
+            if (CatSubs.TryGetValue(state, out var genericSub)
+                && genericSub is T specificSub)
             {
-                sub = specificSup;
+                sub = specificSub;
                 return true;
             }
             else

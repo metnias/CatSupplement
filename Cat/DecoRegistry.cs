@@ -19,22 +19,42 @@ namespace CatSub.Cat
         private readonly static ConditionalWeakTable<PlayerState, CatDecoration> CatDecos
             = new ConditionalWeakTable<PlayerState, CatDecoration>();
 
-        internal static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatDecoration, new()
+        /// <summary>
+        /// Register constructor so that this mod will append this to player instances automatically.
+        /// </summary>
+        /// <param name="name"><see cref="SlugcatStats.Name"/> to append</param>
+        /// <param name="factory"><c>state => new ExampleCatDecoration(state)</c></param>
+        public static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatDecoration, new()
         {
             CatDecoPrototype.Add(name, new T());
             CatDecoFactory.Add(name, factory);
+        }
+
+        public static void Unregister(SlugName name)
+        {
+            CatDecoPrototype.Remove(name);
+            CatDecoFactory.Remove(name);
         }
 
         public static void AddDeco(PlayerState state)
         {
             if (!CatDecos.TryGetValue(state, out _)
                 && state.creature.realizedObject is Player player
-                && CatDecoFactory.TryGetValue(player.SlugCatClass, out var factory))
-            {
-                CatDecos.Add(state, factory(player));
-            }
+                && TryMakeDeco(player, out CatDecoration deco))
+                CatDecos.Add(state, deco);
         }
 
+        public static bool TryMakeDeco<T>(Player player, out T sub) where T : CatDecoration
+        {
+            sub = default;
+            if (CatDecoFactory.TryGetValue(player.SlugCatClass, out var factory))
+            {
+                var genericSub = factory(player);
+                if (genericSub is T)
+                { sub = genericSub as T; return true; }
+            }
+            return false;
+        }
         public static bool TryGetDeco<T>(PlayerState state, out T sup) where T : CatDecoration
         {
             if (CatDecos.TryGetValue(state, out var genericSup)

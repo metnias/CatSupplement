@@ -16,13 +16,6 @@ namespace CatSub.Cat
 
         public CatSupplement() { }
 
-        /// <summary>
-        /// Register constructor so that this mod will append this to player instances automatically.
-        /// </summary>
-        /// <param name="factory"><c>state => new ExampleCatSupplement(state)</c></param>
-        public static void Register<T>(SlugcatStats.Name name, Func<Player, T> factory) where T : CatSupplement, new()
-            => SubRegistry.Register(name, factory);
-
         public readonly PlayerState state;
         public AbstractCreature Owner => state.creature;
         public Player self => Owner.realizedCreature as Player;
@@ -34,7 +27,7 @@ namespace CatSub.Cat
         public bool TryGetDeco<T>(out T deco) where T : CatDecoration
             => DecoRegistry.TryGetDeco(state, out deco);
 
-        protected internal virtual void Update(On.Player.orig_Update orig, bool eu)
+        public virtual void Update(On.Player.orig_Update orig, bool eu)
         {
             orig(self, eu);
         }
@@ -42,7 +35,7 @@ namespace CatSub.Cat
         /// <summary>
         /// This destroys <see cref="soundLoop"/> if it exists
         /// </summary>
-        protected internal virtual void Destroy(On.Player.orig_Destroy orig)
+        public virtual void Destroy(On.Player.orig_Destroy orig)
         {
             orig(self);
             soundLoop?.Destroy();
@@ -53,7 +46,7 @@ namespace CatSub.Cat
         /// <summary>
         /// Returns text to be displayed instead of Pick up interaction
         /// </summary>
-        protected internal virtual string ControlTutorial()
+        public virtual string ControlTutorial()
         {
             return "";
         }
@@ -62,7 +55,7 @@ namespace CatSub.Cat
         /// Creates new save data dependent to <see cref="SaveState.miscWorldSaveData"/>,
         /// and is wiped by death or quit.
         /// </summary>
-        protected internal virtual SaveDataTable AppendNewProgSaveData()
+        public virtual SaveDataTable AppendNewProgSaveData()
         {
             return new SaveDataTable();
         }
@@ -71,7 +64,7 @@ namespace CatSub.Cat
         /// Creates new save data dependent to <see cref="SaveState.deathPersistentSaveData"/>,
         /// which stays with death or quit, but gets wiped with new run.
         /// </summary>
-        protected internal virtual SaveDataTable AppendNewPersSaveData()
+        public virtual SaveDataTable AppendNewPersSaveData()
         {
             return new SaveDataTable();
         }
@@ -79,7 +72,7 @@ namespace CatSub.Cat
         /// <summary>
         /// Updates death persistant save data for situations like win, or force quit etc.
         /// </summary>
-        protected internal virtual void UpdatePersSaveData(ref SaveDataTable table, DeathPersistentSaveData data, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        public virtual void UpdatePersSaveData(ref SaveDataTable table, DeathPersistentSaveData data, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
         }
 
@@ -87,7 +80,7 @@ namespace CatSub.Cat
         /// Creates new save data dependent to <see cref="PlayerProgression.MiscProgressionData"/>,
         /// which stays with new runs or different campaign, and only gets wiped by resetting save slot
         /// </summary>
-        protected internal virtual SaveDataTable AppendNewMiscSaveData()
+        public virtual SaveDataTable AppendNewMiscSaveData()
         {
             return new SaveDataTable();
         }

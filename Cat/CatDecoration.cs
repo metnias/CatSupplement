@@ -18,13 +18,6 @@ namespace CatSub.Cat
 
         public CatDecoration() { }
 
-        /// <summary>
-        /// Register constructor so that this mod will append this to player instances automatically.
-        /// </summary>
-        /// <param name="factory"><c>state => new ExampleCatDecoration(state)</c></param>
-        public static void Register<T>(SlugcatStats.Name name, Func<Player, T> factory) where T : CatDecoration, new()
-            => DecoRegistry.Register(name, factory);
-
         public readonly PlayerState state;
         public AbstractCreature Owner => state.creature;
         public Player player => Owner.realizedCreature as Player;
@@ -36,15 +29,15 @@ namespace CatSub.Cat
         public static bool TryGetDeco<T>(PlayerState self, out T deco) where T : CatDecoration
             => DecoRegistry.TryGetDeco(self, out deco);
 
-        protected FSprite[] sprites;
-        protected FContainer container;
+        public FSprite[] sprites;
+        public FContainer container;
 
-        protected internal virtual void Update(On.PlayerGraphics.orig_Update orig)
+        public virtual void Update(On.PlayerGraphics.orig_Update orig)
         {
             orig(self);
         }
 
-        protected internal virtual void InitiateSprites(On.PlayerGraphics.orig_InitiateSprites orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
+        public virtual void InitiateSprites(On.PlayerGraphics.orig_InitiateSprites orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
         {
             orig(self, sLeaser, rCam);
 
@@ -54,7 +47,7 @@ namespace CatSub.Cat
             //AddToContainer(sLeaser, rCam, null);
         }
 
-        protected internal virtual void AddToContainer(On.PlayerGraphics.orig_AddToContainer orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
+        public virtual void AddToContainer(On.PlayerGraphics.orig_AddToContainer orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
         {
             orig(self, sLeaser, rCam, newContatiner);
 
@@ -64,15 +57,15 @@ namespace CatSub.Cat
             newContatiner.AddChild(container);
         }
 
-        protected internal virtual void ApplyPalette(On.PlayerGraphics.orig_ApplyPalette orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
+        public virtual void ApplyPalette(On.PlayerGraphics.orig_ApplyPalette orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
         {
             orig(self, sLeaser, rCam, palette);
 
-            defaultBodyColor = sLeaser.sprites[0].color;
-            defaultFaceColor = sLeaser.sprites[9].color;
+            bodyColor = sLeaser.sprites[0].color;
+            faceColor = sLeaser.sprites[9].color;
         }
 
-        protected internal virtual void DrawSprites(On.PlayerGraphics.orig_DrawSprites orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
+        public virtual void DrawSprites(On.PlayerGraphics.orig_DrawSprites orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
         {
             orig(self, sLeaser, rCam, timeStacker, camPos);
 
@@ -81,14 +74,14 @@ namespace CatSub.Cat
             container.isVisible = true;
         }
 
-        protected internal virtual void SuckedIntoShortCut(On.PlayerGraphics.orig_SuckedIntoShortCut orig, Vector2 shortCutPosition)
+        public virtual void SuckedIntoShortCut(On.PlayerGraphics.orig_SuckedIntoShortCut orig, Vector2 shortCutPosition)
         {
             orig(self, shortCutPosition);
 
             container.RemoveFromContainer();
         }
 
-        protected internal virtual void Reset(On.PlayerGraphics.orig_Reset orig)
+        public virtual void Reset(On.PlayerGraphics.orig_Reset orig)
         {
             orig(self);
         }
@@ -108,18 +101,18 @@ namespace CatSub.Cat
             Custom.DirVec(GetPos(Mathf.FloorToInt(idx), timeStacker), GetPos(Mathf.FloorToInt(idx) + 1, timeStacker));
 
 
-        public Color GetBodyColor() => defaultBodyColor;
+        public Color GetBodyColor() => bodyColor;
 
-        public Color GetFaceColor() => defaultFaceColor;
+        public Color GetFaceColor() => faceColor;
 
         public Color GetThirdColor() =>
             ModManager.CoopAvailable && self.useJollyColor
             ? JollyColor(player.playerState.playerNumber, 2) :
-            CustomColorsEnabled() ? CustomColorSafety(2) : defaultThirdColor;
+            CustomColorsEnabled() ? CustomColorSafety(2) : DefaultThirdColor;
 
-        protected Color defaultBodyColor = Color.white;
-        protected Color defaultFaceColor = new Color(0.01f, 0.01f, 0.01f);
-        protected Color defaultThirdColor = new Color(0.01f, 0.01f, 0.01f);
+        protected Color bodyColor = Color.white;
+        protected Color faceColor = new Color(0.01f, 0.01f, 0.01f);
+        protected virtual Color DefaultThirdColor => new Color(0.01f, 0.01f, 0.01f);
 
         #endregion Getters
     }
