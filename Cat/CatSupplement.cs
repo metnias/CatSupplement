@@ -77,6 +77,13 @@ namespace CatSub.Cat
         }
 
         /// <summary>
+        /// Updates death persistant save data for situations like win, or force quit etc.
+        /// </summary>
+        protected internal virtual void UpdatePersSaveData(ref SaveDataTable table, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        {
+        }
+
+        /// <summary>
         /// Creates new save data dependent to <see cref="PlayerProgression.MiscProgressionData"/>,
         /// which stays with new runs or different campaign, and only gets wiped by resetting save slot
         /// </summary>

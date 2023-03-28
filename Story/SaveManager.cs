@@ -32,6 +32,8 @@ namespace CatSub.Story
 
         public static readonly string PREFIX = "<CatSubData>";
 
+        public static readonly string PERSSLUGCAT = "CatSub_DeathPersDataTableSlugcat";
+
         #region InitialSave
 
         private static SaveDataTable CreateNewProgSaveData(SlugName saveStateNumber)
@@ -45,7 +47,7 @@ namespace CatSub.Story
         private static SaveDataTable CreateNewPersSaveData(SlugName slugcat)
         {
             if (SubRegistry.TryGetPrototype(slugcat, out CatSupplement sub))
-                return sub.AppendNewProgSaveData();
+                return sub.AppendNewPersSaveData();
             return new SaveDataTable();
         }
 
@@ -120,13 +122,12 @@ namespace CatSub.Story
 
         private static ConditionalWeakTable<DeathPersistentSaveData, SaveDataTable> persDataTable;
 
-        private static void PersDataCtorPatch(On.DeathPersistentSaveData.orig_ctor orig, DeathPersistentSaveData self, SlugcatStats.Name slugcat)
+        private static void PersDataCtorPatch(On.DeathPersistentSaveData.orig_ctor orig, DeathPersistentSaveData self, SlugName slugcat)
         {
             orig(self, slugcat);
 
-            //if (slugcat != PlanterEnums.SlugPlanter) return;
-
             SaveDataTable pers = CreateNewPersSaveData(slugcat);
+            pers.SetValue(PERSSLUGCAT, slugcat);
             persDataTable.Add(self, pers);
         }
 
@@ -134,7 +135,7 @@ namespace CatSub.Story
         {
             if (persDataTable.TryGetValue(self, out var saveData))
             {
-                UpdatePersSaveData(self, ref saveData, saveAsIfPlayerDied, saveAsIfPlayerQuit);
+                UpdatePersSaveData(ref saveData, saveAsIfPlayerDied, saveAsIfPlayerQuit);
 
                 var saveDataPos = -1;
                 for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
@@ -150,10 +151,11 @@ namespace CatSub.Story
             return orig(self, saveAsIfPlayerDied, saveAsIfPlayerQuit);
         }
 
-        private static void UpdatePersSaveData(DeathPersistentSaveData self, ref SaveDataTable persData, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        private static void UpdatePersSaveData(ref SaveDataTable persData, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
-            //if (saveAsIfPlayerDied && !self.reinforcedKarma)
-
+            var slugcat = persData.GetValue<SlugName>(PERSSLUGCAT);
+            if (SubRegistry.TryGetPrototype(slugcat, out CatSupplement sub))
+                sub.UpdatePersSaveData(ref persData, saveAsIfPlayerDied, saveAsIfPlayerQuit);
         }
 
         private static void PersDataFromStringPatch(On.DeathPersistentSaveData.orig_FromString orig, DeathPersistentSaveData self, string s)
