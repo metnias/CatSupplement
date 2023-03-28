@@ -1,9 +1,7 @@
 ﻿using Menu;
 using RWCustom;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using SlugName = SlugcatStats.Name;
 
@@ -34,7 +32,7 @@ namespace CatSupplement.Cat
             orig.Invoke(map, menu, owner, pos, preset, showPickupInstructions);
             if (!showPickupInstructions) return;
             if (!(Custom.rainWorld.processManager.currentMainLoop is RainWorldGame rwg)) return;
-            if (!SubRegistry.TryGetProtoType(rwg.StoryCharacter, out var sub)) return;
+            if (!SubRegistry.TryGetPrototype(rwg.StoryCharacter, out CatSupplement sub)) return;
             string tutorial = sub.ControlTutorial();
             if (!string.IsNullOrEmpty(tutorial))
                 map.pickupButtonInstructions.text = sub.ControlTutorial();
@@ -43,16 +41,8 @@ namespace CatSupplement.Cat
 
         #region Player
 
-        private readonly static ConditionalWeakTable<AbstractCreature, CatSupplement> catSubs
-            = new ConditionalWeakTable<AbstractCreature, CatSupplement>();
-
-        public static bool TryGetSub(AbstractCreature self, out CatSupplement sub)
-        {
-            sub = null;
-            if (!(self.state is PlayerState)) return false;
-            if (catSubs.TryGetValue(self, out sub)) return true;
-            return false;
-        }
+        public static bool TryGetSub(Player self, out CatSupplement sub)
+            => SubRegistry.TryGetSub(self.playerState, out sub);
 
         private static void StartGamePatch(On.RainWorldGame.orig_ctor orig, RainWorldGame self, ProcessManager manager)
         {
@@ -70,18 +60,14 @@ namespace CatSupplement.Cat
         private static void CtorPatch(On.Player.orig_ctor orig, Player self, AbstractCreature abstractCreature, World world)
         {
             orig(self, abstractCreature, world);
-            if (TryGetSub(abstractCreature, out var _)) return;
 
-            if (SubRegistry.TryCreateSupplement(self, out var sub))
-                catSubs.Add(self.abstractCreature, (CatSupplement)Activator.CreateInstance(sub.GetType(), self));
-
-            //catSubs.Add(self.abstractCreature, new PlanterCatSupplement(self.abstractCreature));
-            //catDecos.Add(self.abstractCreature, new PlanterCatDecoration(self.abstractCreature));
+            SubRegistry.AddSub(self.playerState);
+            DecoRegistry.AddDeco(self.playerState);
         }
 
         private static void UpdatePatch(On.Player.orig_Update orig, Player self, bool eu)
         {
-            if (TryGetSub(self.abstractCreature, out var sub))
+            if (TryGetSub(self, out var sub))
                 sub.Update(orig, eu);
             else
                 orig(self, eu);
@@ -89,7 +75,7 @@ namespace CatSupplement.Cat
 
         private static void DestroyPatch(On.Player.orig_Destroy orig, Player self)
         {
-            if (TryGetSub(self.abstractCreature, out var sub))
+            if (TryGetSub(self, out var sub))
                 sub.Destroy(orig);
             else
                 orig(self);

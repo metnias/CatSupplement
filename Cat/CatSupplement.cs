@@ -1,5 +1,6 @@
 ﻿using CatSupplement.Cat;
 using CatSupplement.Story;
+using System;
 
 namespace CatSupplement
 {
@@ -7,18 +8,25 @@ namespace CatSupplement
     {
         public CatSupplement(Player player)
         {
-            this.owner = player.abstractCreature;
+            state = player.playerState;
         }
 
         public CatSupplement() { }
 
-        public readonly AbstractCreature owner;
-        public Player self => owner.realizedCreature as Player;
-        public CatDecoration Deco { get { AppendCatDeco.TryGetDeco(owner, out var sub); return sub; } }
+        public static void Register<T>(SlugcatStats.Name name, Func<PlayerState, T> factory) where T : CatSupplement, new()
+            => SubRegistry.Register<T>(name, factory);
+
+        public readonly PlayerState state;
+        public AbstractCreature Owner => state.creature;
+        public Player self => Owner.realizedCreature as Player;
         public ChunkSoundEmitter soundLoop;
         
-        public bool TryGetSub(AbstractCreature self, out CatSupplement sub) =>
-            AppendCatSub.TryGetSub(self, out sub);
+        public static bool TryGetSub(PlayerState self, out CatSupplement sub) =>
+            SubRegistry.TryGetSub(self, out sub);
+
+        public bool TryGetDeco(out CatDecoration deco) =>
+            DecoRegistry.TryGetDeco(state, out deco);
+
 
         protected internal virtual void Update(On.Player.orig_Update orig, bool eu)
         {

@@ -1,5 +1,6 @@
 ﻿using CatSupplement.Cat;
 using RWCustom;
+using System;
 using UnityEngine;
 using static PlayerGraphics;
 
@@ -9,18 +10,24 @@ namespace CatSupplement
     {
         public CatDecoration(Player player)
         {
-            this.owner = player.abstractCreature;
+            state = player.playerState;
         }
 
         public CatDecoration() { }
 
-        public readonly AbstractCreature owner;
-        public Player player => owner.realizedCreature as Player;
-        public PlayerGraphics self => player.graphicsModule as PlayerGraphics;
-        public CatSupplement Sub { get { AppendCatSub.TryGetSub(owner, out var sub); return sub; } }
+        public static void Register<T>(SlugcatStats.Name name, Func<PlayerState, T> factory) where T : CatDecoration, new()
+            => DecoRegistry.Register<T>(name, factory);
 
-        public bool TryGetDeco(AbstractCreature self, out CatDecoration deco) =>
-            AppendCatDeco.TryGetDeco(self, out deco);
+        public readonly PlayerState state;
+        public AbstractCreature Owner => state.creature;
+        public Player player => Owner.realizedCreature as Player;
+        public PlayerGraphics self => player.graphicsModule as PlayerGraphics;
+
+        public bool TryGetSub(out CatSupplement sub) =>
+            SubRegistry.TryGetSub(state, out sub);
+
+        public static bool TryGetDeco(PlayerState self, out CatDecoration deco) =>
+            DecoRegistry.TryGetDeco(self, out deco);
 
         protected FSprite[] sprites;
         protected FContainer container;

@@ -1,10 +1,4 @@
-﻿using Menu;
-using RWCustom;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using UnityEngine;
-using SlugName = SlugcatStats.Name;
+﻿using UnityEngine;
 
 namespace CatSupplement.Cat
 {
@@ -23,20 +17,12 @@ namespace CatSupplement.Cat
 
         #region Graphics
 
-        private readonly static ConditionalWeakTable<AbstractCreature, CatDecoration> catDecos
-             = new ConditionalWeakTable<AbstractCreature, CatDecoration>();
-
-        public static bool TryGetDeco(AbstractCreature self, out CatDecoration deco)
-        {
-            deco = null;
-            if (!(self.state is PlayerState)) return false;
-            if (catDecos.TryGetValue(self, out deco)) return true;
-            return false;
-        }
+        public static bool TryGetDeco(PlayerGraphics self, out CatDecoration deco)
+            => DecoRegistry.TryGetDeco(self.player.playerState, out deco);
 
         private static void UpdatePatch(On.PlayerGraphics.orig_Update orig, PlayerGraphics self)
         {
-            if (TryGetDeco(self.player.abstractCreature, out var deco))
+            if (TryGetDeco(self, out var deco))
                 deco.Update(orig);
             else
                 orig(self);
@@ -45,7 +31,7 @@ namespace CatSupplement.Cat
         private static void InitSprPatch(On.PlayerGraphics.orig_InitiateSprites orig, PlayerGraphics self,
             RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
         {
-            if (TryGetDeco(self.player.abstractCreature, out var deco))
+            if (TryGetDeco(self, out var deco))
                 deco.InitiateSprites(orig, sLeaser, rCam);
             else
                 orig(self, sLeaser, rCam);
@@ -54,7 +40,7 @@ namespace CatSupplement.Cat
         private static void SuckedIntoShortCutPatch(On.PlayerGraphics.orig_SuckedIntoShortCut orig,
             PlayerGraphics self, Vector2 shortCutPosition)
         {
-            if (TryGetDeco(self.player.abstractCreature, out var deco))
+            if (TryGetDeco(self, out var deco))
                 deco.SuckedIntoShortCut(orig, shortCutPosition);
             else
                 orig(self, shortCutPosition);
@@ -62,7 +48,7 @@ namespace CatSupplement.Cat
 
         private static void ResetPatch(On.PlayerGraphics.orig_Reset orig, PlayerGraphics self)
         {
-            if (TryGetDeco(self.player.abstractCreature, out var deco))
+            if (TryGetDeco(self, out var deco))
                 deco.Reset(orig);
             else
                 orig(self);
@@ -71,7 +57,7 @@ namespace CatSupplement.Cat
         private static void DrawSprPatch(On.PlayerGraphics.orig_DrawSprites orig, PlayerGraphics self,
             RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
         {
-            if (TryGetDeco(self.player.abstractCreature, out var deco))
+            if (TryGetDeco(self, out var deco))
                 deco.DrawSprites(orig, sLeaser, rCam, timeStacker, camPos);
             else
                 orig(self, sLeaser, rCam, timeStacker, camPos);
@@ -80,7 +66,7 @@ namespace CatSupplement.Cat
         private static void AddToCtnrPatch(On.PlayerGraphics.orig_AddToContainer orig, PlayerGraphics self,
             RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
         {
-            if (TryGetDeco(self.player.abstractCreature, out var deco))
+            if (TryGetDeco(self, out var deco))
                 deco.AddToContainer(orig, sLeaser, rCam, newContatiner);
             else
                 orig(self, sLeaser, rCam, newContatiner);
@@ -89,7 +75,7 @@ namespace CatSupplement.Cat
         private static void PalettePatch(On.PlayerGraphics.orig_ApplyPalette orig, PlayerGraphics self,
             RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
         {
-            if (TryGetDeco(self.player.abstractCreature, out var deco))
+            if (TryGetDeco(self, out var deco))
                 deco.ApplyPalette(orig, sLeaser, rCam, palette);
             else
                 orig(self, sLeaser, rCam, palette);

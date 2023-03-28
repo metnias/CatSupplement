@@ -41,7 +41,7 @@ namespace CatSupplement.Story
 
         private static SaveDataTable CreateNewProgSaveData(SlugName saveStateNumber)
         {
-            if (SubRegistry.TryGetProtoType(saveStateNumber, out var sub))
+            if (SubRegistry.TryGetPrototype(saveStateNumber, out CatSupplement sub))
                 return sub.AppendNewProgSaveData();
             return new SaveDataTable();
         }
@@ -49,7 +49,7 @@ namespace CatSupplement.Story
 
         private static SaveDataTable CreateNewPersSaveData(SlugName slugcat)
         {
-            if (SubRegistry.TryGetProtoType(slugcat, out var sub))
+            if (SubRegistry.TryGetPrototype(slugcat, out CatSupplement sub))
                 return sub.AppendNewProgSaveData();
             return new SaveDataTable();
         }
