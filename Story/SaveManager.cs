@@ -1,15 +1,9 @@
 ﻿using CatSupplement.Cat;
-using Menu;
 using Menu.Remix;
-using RWCustom;
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.RegularExpressions;
-using UnityEngine;
 using MiscProgressionData = PlayerProgression.MiscProgressionData;
-using SaveGameData = Menu.SlugcatSelectMenu.SaveGameData;
 using SlugName = SlugcatStats.Name;
 
 namespace CatSupplement.Story
@@ -161,7 +155,7 @@ namespace CatSupplement.Story
         private static void UpdatePersSaveData(DeathPersistentSaveData self, ref SaveDataTable persData, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
             //if (saveAsIfPlayerDied && !self.reinforcedKarma)
-            
+
         }
 
         private static void PersDataFromStringPatch(On.DeathPersistentSaveData.orig_FromString orig, DeathPersistentSaveData self, string s)

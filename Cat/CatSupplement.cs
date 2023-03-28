@@ -20,7 +20,7 @@ namespace CatSupplement
         public AbstractCreature Owner => state.creature;
         public Player self => Owner.realizedCreature as Player;
         public ChunkSoundEmitter soundLoop;
-        
+
         public static bool TryGetSub(PlayerState self, out CatSupplement sub) =>
             SubRegistry.TryGetSub(self, out sub);
 

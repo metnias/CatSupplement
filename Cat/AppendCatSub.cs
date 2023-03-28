@@ -1,9 +1,9 @@
-﻿using CatSupplement.Story;
-using Menu;
+﻿using Menu;
 using RWCustom;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static CatSupplement.Story.StoryRegistry;
 using SlugName = SlugcatStats.Name;
 
 namespace CatSupplement.Cat
@@ -23,12 +23,13 @@ namespace CatSupplement.Cat
         private static SlugName[] AppendTimelineOrder(On.SlugcatStats.orig_getSlugcatTimelineOrder orig)
         {
             LinkedList<SlugName> list = new LinkedList<SlugName>(orig());
-            var queue = StoryRegistry.GetTimelinePointers();
+            var queue = GetTimelinePointers();
             int search = 0;
             while (queue.Count > 0)
             {
                 var p = queue.Dequeue();
-                for (int i = 0; i < p.pivots.Length; ++i) {
+                for (int i = 0; i < p.pivots.Length; ++i)
+                {
                     var node = list.Find(p.pivots[i]);
                     if (node != null)
                     {
@@ -68,14 +69,13 @@ namespace CatSupplement.Cat
         private static void StartGamePatch(On.RainWorldGame.orig_ctor orig, RainWorldGame self, ProcessManager manager)
         {
             orig(self, manager);
-            /*
             if (!self.IsStorySession) return;
+
             for (int i = 0; i < self.Players.Count; i++)
                 if (self.world.GetAbstractRoom(self.Players[i].pos) != null)
                     if (self.world.GetAbstractRoom(self.Players[i].pos).shelter) continue;
-                    else if (self.world.GetAbstractRoom(self.Players[i].pos).name == "LF_A11") // Sporecat
-                        self.Players[i].pos.Tile = new IntVector2(11, 30);
-            */
+                    else if (TryGetStartTile(self.world.GetAbstractRoom(self.Players[i].pos).name, out var tile))
+                        self.Players[i].pos.Tile = tile;
         }
 
         private static void CtorPatch(On.Player.orig_ctor orig, Player self, AbstractCreature abstractCreature, World world)
