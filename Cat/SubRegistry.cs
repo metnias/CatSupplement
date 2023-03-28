@@ -38,32 +38,43 @@ namespace CatSub.Cat
             }
         }
 
-        public static bool TryGetSub<T>(PlayerState state, out T sup) where T : CatSupplement
+        public static bool TryMakeSub<T>(Player player, out T sub) where T : CatSupplement
+        {
+            if (CatSubFactory.TryGetValue(player.SlugCatClass, out var factory))
+            {
+                sub = factory(player) as T;
+                return true;
+            }
+            sub = null;
+            return false;
+        }
+
+        public static bool TryGetSub<T>(PlayerState state, out T sub) where T : CatSupplement
         {
             if (CatSubs.TryGetValue(state, out var genericSup)
                 && genericSup is T specificSup)
             {
-                sup = specificSup;
+                sub = specificSup;
                 return true;
             }
             else
             {
-                sup = default;
+                sub = default;
                 return false;
             }
         }
 
-        public static bool TryGetPrototype<T>(SlugName name, out T sup) where T : CatSupplement
+        public static bool TryGetPrototype<T>(SlugName name, out T sub) where T : CatSupplement
         {
-            if (CatSubPrototype.TryGetValue(name, out var genericSup)
-                && genericSup is T specificSup)
+            if (CatSubPrototype.TryGetValue(name, out var genericSub)
+                && genericSub is T specificSub)
             {
-                sup = specificSup;
+                sub = specificSub;
                 return true;
             }
             else
             {
-                sup = default;
+                sub = default;
                 return false;
             }
         }
