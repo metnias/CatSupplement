@@ -22,6 +22,13 @@ namespace CatSub.Cat
         public Player self => Owner.realizedCreature as Player;
         public ChunkSoundEmitter soundLoop;
 
+        /// <summary>
+        /// This is detected with StartsWith.
+        /// <para>1.(major update).(major patch).(minor patch)</para>
+        /// Minor patches won't break compatibility.
+        /// Major patches may break compatibility, and major updates surely will.
+        /// It's best to write down to major patch number. (e.g. 1.0.0)
+        /// </summary>
         public abstract string TargetSubVersion { get; }
 
         public static bool TryGetSub<T>(PlayerState self, out T sub) where T : CatSupplement
