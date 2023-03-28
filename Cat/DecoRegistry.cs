@@ -50,17 +50,6 @@ namespace CatSub.Cat
             }
         }
 
-        public static bool TryMakeDeco<T>(Player player, out T sub) where T : CatDecoration
-        {
-            if (CatDecoFactory.TryGetValue(player.SlugCatClass, out var factory))
-            {
-                sub = factory(player) as T;
-                return true;
-            }
-            sub = null;
-            return false;
-        }
-
         public static bool TryGetPrototype<T>(SlugName name, out T sup) where T : CatDecoration
         {
             if (CatDecoPrototype.TryGetValue(name, out var genericSup)

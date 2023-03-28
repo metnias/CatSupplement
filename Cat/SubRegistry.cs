@@ -38,17 +38,6 @@ namespace CatSub.Cat
             }
         }
 
-        public static bool TryMakeSub<T>(Player player, out T sub) where T : CatSupplement
-        {
-            if (CatSubFactory.TryGetValue(player.SlugCatClass, out var factory))
-            {
-                sub = factory(player) as T;
-                return true;
-            }
-            sub = null;
-            return false;
-        }
-
         public static bool TryGetSub<T>(PlayerState state, out T sub) where T : CatSupplement
         {
             if (CatSubs.TryGetValue(state, out var genericSup)
