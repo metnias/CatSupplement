@@ -28,11 +28,11 @@ namespace CatSub.Cat
         public Player self => Owner.realizedCreature as Player;
         public ChunkSoundEmitter soundLoop;
 
-        public static bool TryGetSub(PlayerState self, out CatSupplement sub) =>
-            SubRegistry.TryGetSub(self, out sub);
+        public static bool TryGetSub<T>(PlayerState self, out T sub) where T : CatSupplement
+            => SubRegistry.TryGetSub(self, out sub);
 
-        public bool TryGetDeco(out CatDecoration deco) =>
-            DecoRegistry.TryGetDeco(state, out deco);
+        public bool TryGetDeco<T>(out T deco) where T : CatDecoration
+            => DecoRegistry.TryGetDeco(state, out deco);
 
         protected internal virtual void Update(On.Player.orig_Update orig, bool eu)
         {

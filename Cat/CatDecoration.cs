@@ -30,11 +30,11 @@ namespace CatSub.Cat
         public Player player => Owner.realizedCreature as Player;
         public PlayerGraphics self => player.graphicsModule as PlayerGraphics;
 
-        public bool TryGetSub(out CatSupplement sub) =>
-            SubRegistry.TryGetSub(state, out sub);
+        public bool TryGetSub<T>(out T sub) where T : CatSupplement
+            => SubRegistry.TryGetSub(state, out sub);
 
-        public static bool TryGetDeco(PlayerState self, out CatDecoration deco) =>
-            DecoRegistry.TryGetDeco(self, out deco);
+        public static bool TryGetDeco<T>(PlayerState self, out T deco) where T : CatDecoration
+            => DecoRegistry.TryGetDeco(self, out deco);
 
         protected FSprite[] sprites;
         protected FContainer container;
