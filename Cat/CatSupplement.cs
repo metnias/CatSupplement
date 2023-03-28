@@ -14,12 +14,15 @@ namespace CatSub.Cat
             state = player.playerState;
         }
 
-        public CatSupplement() { }
+        public CatSupplement()
+        { }
 
         public readonly PlayerState state;
         public AbstractCreature Owner => state.creature;
         public Player self => Owner.realizedCreature as Player;
         public ChunkSoundEmitter soundLoop;
+
+        public abstract string TargetSubVersion { get; }
 
         public static bool TryGetSub<T>(PlayerState self, out T sub) where T : CatSupplement
             => SubRegistry.TryGetSub(self, out sub);

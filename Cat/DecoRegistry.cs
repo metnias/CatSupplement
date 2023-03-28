@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 using SlugName = SlugcatStats.Name;
 
 namespace CatSub.Cat
@@ -16,7 +17,7 @@ namespace CatSub.Cat
         private static readonly Dictionary<SlugName, Func<Player, CatDecoration>> CatDecoFactory
             = new Dictionary<SlugName, Func<Player, CatDecoration>>();
 
-        private readonly static ConditionalWeakTable<PlayerState, CatDecoration> CatDecos
+        private static readonly ConditionalWeakTable<PlayerState, CatDecoration> CatDecos
             = new ConditionalWeakTable<PlayerState, CatDecoration>();
 
         /// <summary>
@@ -26,6 +27,11 @@ namespace CatSub.Cat
         /// <param name="factory"><c>state => new ExampleCatDecoration(state)</c></param>
         public static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatDecoration, new()
         {
+            if (SubRegistry.OutdatedSlugs.Contains(name))
+            {
+                Debug.LogError("This mod is targeted for outdated CatSupplement!");
+                return;
+            }
             CatDecoPrototype.Add(name, new T());
             CatDecoFactory.Add(name, factory);
         }
@@ -55,6 +61,7 @@ namespace CatSub.Cat
             }
             return false;
         }
+
         public static bool TryGetDeco<T>(PlayerState state, out T sup) where T : CatDecoration
         {
             if (CatDecos.TryGetValue(state, out var genericSup)
@@ -84,6 +91,5 @@ namespace CatSub.Cat
                 return false;
             }
         }
-
     }
 }

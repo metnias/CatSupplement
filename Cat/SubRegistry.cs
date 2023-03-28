@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 using SlugName = SlugcatStats.Name;
 
 namespace CatSub.Cat
@@ -16,8 +18,10 @@ namespace CatSub.Cat
         private static readonly Dictionary<SlugName, Func<Player, CatSupplement>> CatSubFactory
             = new Dictionary<SlugName, Func<Player, CatSupplement>>();
 
-        private readonly static ConditionalWeakTable<PlayerState, CatSupplement> CatSubs
+        private static readonly ConditionalWeakTable<PlayerState, CatSupplement> CatSubs
             = new ConditionalWeakTable<PlayerState, CatSupplement>();
+
+        internal static readonly List<SlugName> OutdatedSlugs = new List<SlugName>();
 
         /// <summary>
         /// Register constructor so that this mod will append this to player instances automatically.
@@ -26,7 +30,21 @@ namespace CatSub.Cat
         /// <param name="factory"><c>state => new ExampleCatSupplement(state)</c></param>
         public static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatSupplement, new()
         {
-            CatSubPrototype.Add(name, new T());
+            if (OutdatedSlugs.Contains(name))
+            {
+                Debug.LogError("This mod is targeted for outdated CatSupplement!");
+                return;
+            }
+            var proto = new T();
+            if (string.IsNullOrEmpty(proto.TargetSubVersion) ||
+                !SubPlugin.PLUGIN_VERSION.StartsWith(proto.TargetSubVersion))
+            {
+                Debug.LogError($"This mod is targeted for outdated CatSupplement!\nTarget: {proto.TargetSubVersion}, Current: {SubPlugin.PLUGIN_VERSION}");
+                OutdatedSlugs.Add(name);
+                return;
+            }
+
+            CatSubPrototype.Add(name, proto);
             CatSubFactory.Add(name, factory);
         }
 
@@ -85,6 +103,5 @@ namespace CatSub.Cat
                 return false;
             }
         }
-
     }
 }
