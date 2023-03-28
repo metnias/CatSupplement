@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CatSupplement.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -59,12 +60,16 @@
     <Compile Include="Cat\AppendCatSub.cs" />
     <Compile Include="Cat\CatDecoration.cs" />
     <Compile Include="Cat\CatSupplement.cs" />
-    <Compile Include="DecoRegistry.cs" />
-    <Compile Include="SubRegistry.cs" />
+    <Compile Include="Cat\DecoRegistry.cs" />
+    <Compile Include="Cat\SubRegistry.cs" />
     <Compile Include="Cat\AppendCatDeco.cs" />
     <Compile Include="Story\SaveManager.cs" />
+    <Compile Include="Story\StoryRegistry.cs" />
     <Compile Include="SubPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

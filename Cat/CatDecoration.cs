@@ -8,6 +8,10 @@ namespace CatSupplement
 {
     public abstract class CatDecoration
     {
+        /// <summary>
+        /// Supplement class attached to <see cref="PlayerState"/> instance to keep
+        /// stuff related to <see cref="PlayerGraphics"/>
+        /// </summary>
         public CatDecoration(Player player)
         {
             state = player.playerState;
@@ -15,8 +19,12 @@ namespace CatSupplement
 
         public CatDecoration() { }
 
+        /// <summary>
+        /// Register constructor so that this mod will append this to player instances automatically.
+        /// </summary>
+        /// <param name="factory"><c>state => new ExampleCatDecoration(state)</c></param>
         public static void Register<T>(SlugcatStats.Name name, Func<PlayerState, T> factory) where T : CatDecoration, new()
-            => DecoRegistry.Register<T>(name, factory);
+            => DecoRegistry.Register(name, factory);
 
         public readonly PlayerState state;
         public AbstractCreature Owner => state.creature;

@@ -6,6 +6,10 @@ namespace CatSupplement
 {
     public abstract class CatSupplement
     {
+        /// <summary>
+        /// Supplement class attached to <see cref="PlayerState"/> instance to keep
+        /// stuff related to <see cref="Player"/>
+        /// </summary>
         public CatSupplement(Player player)
         {
             state = player.playerState;
@@ -13,8 +17,12 @@ namespace CatSupplement
 
         public CatSupplement() { }
 
+        /// <summary>
+        /// Register constructor so that this mod will append this to player instances automatically.
+        /// </summary>
+        /// <param name="factory"><c>state => new ExampleCatSupplement(state)</c></param>
         public static void Register<T>(SlugcatStats.Name name, Func<PlayerState, T> factory) where T : CatSupplement, new()
-            => SubRegistry.Register<T>(name, factory);
+            => SubRegistry.Register(name, factory);
 
         public readonly PlayerState state;
         public AbstractCreature Owner => state.creature;
@@ -27,12 +35,14 @@ namespace CatSupplement
         public bool TryGetDeco(out CatDecoration deco) =>
             DecoRegistry.TryGetDeco(state, out deco);
 
-
         protected internal virtual void Update(On.Player.orig_Update orig, bool eu)
         {
             orig(self, eu);
         }
 
+        /// <summary>
+        /// This destroys <see cref="soundLoop"/> if it exists
+        /// </summary>
         protected internal virtual void Destroy(On.Player.orig_Destroy orig)
         {
             orig(self);
