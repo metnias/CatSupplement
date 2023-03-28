@@ -13,13 +13,13 @@ namespace CatSub.Cat
         internal static readonly Dictionary<SlugName, CatDecoration> CatDecoPrototype
             = new Dictionary<SlugName, CatDecoration>();
 
-        private static readonly Dictionary<SlugName, Func<PlayerState, CatDecoration>> CatDecoFactory
-            = new Dictionary<SlugName, Func<PlayerState, CatDecoration>>();
+        private static readonly Dictionary<SlugName, Func<Player, CatDecoration>> CatDecoFactory
+            = new Dictionary<SlugName, Func<Player, CatDecoration>>();
 
         private readonly static ConditionalWeakTable<PlayerState, CatDecoration> CatDecos
             = new ConditionalWeakTable<PlayerState, CatDecoration>();
 
-        internal static void Register<T>(SlugName name, Func<PlayerState, T> factory) where T : CatDecoration, new()
+        internal static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatDecoration, new()
         {
             CatDecoPrototype.Add(name, new T());
             CatDecoFactory.Add(name, factory);
@@ -31,7 +31,7 @@ namespace CatSub.Cat
                 && state.creature.realizedObject is Player player
                 && CatDecoFactory.TryGetValue(player.SlugCatClass, out var factory))
             {
-                CatDecos.Add(state, factory(state));
+                CatDecos.Add(state, factory(player));
             }
         }
 

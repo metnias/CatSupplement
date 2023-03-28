@@ -20,7 +20,7 @@ namespace CatSub.Cat
         /// Register constructor so that this mod will append this to player instances automatically.
         /// </summary>
         /// <param name="factory"><c>state => new ExampleCatSupplement(state)</c></param>
-        public static void Register<T>(SlugcatStats.Name name, Func<PlayerState, T> factory) where T : CatSupplement, new()
+        public static void Register<T>(SlugcatStats.Name name, Func<Player, T> factory) where T : CatSupplement, new()
             => SubRegistry.Register(name, factory);
 
         public readonly PlayerState state;
