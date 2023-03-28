@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using MiscProgressionData = PlayerProgression.MiscProgressionData;
 using SaveGameData = Menu.SlugcatSelectMenu.SaveGameData;
+using SlugName = SlugcatStats.Name;
 
 namespace CatSupplement.Story
 {
@@ -34,27 +35,33 @@ namespace CatSupplement.Story
 
         }
 
-        public static readonly string Prefix = "<CatSubData>";
+        public static readonly string PREFIX = "<CatSubData>";
 
         #region InitialSave
 
-        private static SaveDataTable CreateNewProgSaveData()
+        private static SaveDataTable CreateNewProgSaveData(SlugName saveStateNumber)
         {
-            var prog = new SaveDataTable();
-            return prog;
+            if (SubRegistry.TryGetProtoType(saveStateNumber, out var sub))
+                return sub.AppendNewProgSaveData();
+            return new SaveDataTable();
         }
 
 
-        private static SaveDataTable CreateNewPersSaveData()
+        private static SaveDataTable CreateNewPersSaveData(SlugName slugcat)
         {
-            var pers = new SaveDataTable();
-            return pers;
+            if (SubRegistry.TryGetProtoType(slugcat, out var sub))
+                return sub.AppendNewProgSaveData();
+            return new SaveDataTable();
         }
 
-        private static SaveDataTable CreateNewMiscSaveData()
+        private static void AppendNewMiscSaveData(ref SaveDataTable misc)
         {
-            var misc = new SaveDataTable();
-            return misc;
+            foreach (var pair in SubRegistry.CatSubPrototype)
+            {
+                var table = pair.Value.AppendNewMiscSaveData();
+                foreach (var p in table.table)
+                    if (!misc.table.ContainsKey(p.Key)) misc.table.Add(p.Key, p.Value);
+            }
         }
 
         #endregion InitialSave
@@ -69,7 +76,7 @@ namespace CatSupplement.Story
 
             //if (saveStateNumber != PlanterEnums.SlugPlanter) return;
 
-            SaveDataTable prog = CreateNewProgSaveData();
+            SaveDataTable prog = CreateNewProgSaveData(saveStateNumber);
             progDataTable.Add(self, prog);
         }
 
@@ -79,7 +86,7 @@ namespace CatSupplement.Story
             {
                 var saveDataPos = -1;
                 for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
-                    if (self.unrecognizedSaveStrings[i].StartsWith(Prefix))
+                    if (self.unrecognizedSaveStrings[i].StartsWith(PREFIX))
                         saveDataPos = i;
 
                 if (saveDataPos > -1)
@@ -100,7 +107,7 @@ namespace CatSupplement.Story
             var saveDataPos = -1;
             for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
             {
-                if (self.unrecognizedSaveStrings[i].StartsWith(Prefix))
+                if (self.unrecognizedSaveStrings[i].StartsWith(PREFIX))
                     saveDataPos = i;
             }
 
@@ -126,7 +133,7 @@ namespace CatSupplement.Story
 
             //if (slugcat != PlanterEnums.SlugPlanter) return;
 
-            SaveDataTable pers = CreateNewPersSaveData();
+            SaveDataTable pers = CreateNewPersSaveData(slugcat);
             persDataTable.Add(self, pers);
         }
 
@@ -138,7 +145,7 @@ namespace CatSupplement.Story
 
                 var saveDataPos = -1;
                 for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
-                    if (self.unrecognizedSaveStrings[i].StartsWith(Prefix))
+                    if (self.unrecognizedSaveStrings[i].StartsWith(PREFIX))
                         saveDataPos = i;
 
                 if (saveDataPos > -1)
@@ -165,7 +172,7 @@ namespace CatSupplement.Story
             var saveDataPos = -1;
             for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
             {
-                if (self.unrecognizedSaveStrings[i].StartsWith(Prefix))
+                if (self.unrecognizedSaveStrings[i].StartsWith(PREFIX))
                     saveDataPos = i;
             }
 
@@ -189,7 +196,8 @@ namespace CatSupplement.Story
         {
             orig(self, owner);
 
-            SaveDataTable misc = CreateNewMiscSaveData();
+            SaveDataTable misc = new SaveDataTable();
+            AppendNewMiscSaveData(ref misc);
             miscDataTable.Add(self, misc);
         }
 
@@ -199,7 +207,7 @@ namespace CatSupplement.Story
             {
                 var saveDataPos = -1;
                 for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
-                    if (self.unrecognizedSaveStrings[i].StartsWith(Prefix))
+                    if (self.unrecognizedSaveStrings[i].StartsWith(PREFIX))
                         saveDataPos = i;
 
                 if (saveDataPos > -1)
@@ -220,12 +228,14 @@ namespace CatSupplement.Story
             var saveDataPos = -1;
             for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
             {
-                if (self.unrecognizedSaveStrings[i].StartsWith(Prefix))
+                if (self.unrecognizedSaveStrings[i].StartsWith(PREFIX))
                     saveDataPos = i;
             }
 
             if (saveDataPos > -1)
                 saveData.FromString(self.unrecognizedSaveStrings[saveDataPos]);
+
+            AppendNewMiscSaveData(ref saveData);
         }
 
         internal static T GetMiscValue<T>(MiscProgressionData data, string key)
@@ -236,53 +246,54 @@ namespace CatSupplement.Story
 
         #endregion MiscData
 
+    }
 
-        public class SaveDataTable
+    public class SaveDataTable
+    {
+        internal readonly Dictionary<string, string> table
+            = new Dictionary<string, string>();
+
+        internal const char SPR = '|';
+        internal const char DIV = '~';
+
+        public SaveDataTable()
         {
-            public Dictionary<string, string> table = new Dictionary<string, string>();
+        }
 
-            internal const char SPR = '|';
-            internal const char DIV = '~';
+        public T GetValue<T>(string key) => ValueConverter.ConvertToValue<T>(table[key]);
 
-            public SaveDataTable()
+        public void SetValue<T>(string key, T value)
+        {
+            var t = ValueConverter.ConvertToString(value);
+            if (table.ContainsKey(key)) table[key] = t;
+            else table.Add(key, t);
+        }
+
+        public void FromString(string text)
+        {
+            text = text.Substring(SaveManager.PREFIX.Length);
+            var data = text.Split(SPR);
+            foreach (var d in data)
             {
+                var e = d.Split(DIV);
+                if (e.Length < 2) continue;
+                SetValue(e[0], e[1]);
+            }
+        }
+
+        public override string ToString()
+        {
+            var text = new StringBuilder(SaveManager.PREFIX);
+
+            foreach (var d in table)
+            {
+                text.Append(d.Key);
+                text.Append(DIV);
+                text.Append(d.Value);
+                text.Append(SPR);
             }
 
-            public T GetValue<T>(string key) => ValueConverter.ConvertToValue<T>(table[key]);
-
-            public void SetValue<T>(string key, T value)
-            {
-                var t = ValueConverter.ConvertToString(value);
-                if (table.ContainsKey(key)) table[key] = t;
-                else table.Add(key, t);
-            }
-
-            public void FromString(string text)
-            {
-                text = text.Substring(Prefix.Length);
-                var data = text.Split(SPR);
-                foreach (var d in data)
-                {
-                    var e = d.Split(DIV);
-                    if (e.Length < 2) continue;
-                    SetValue(e[0], e[1]);
-                }
-            }
-
-            public override string ToString()
-            {
-                var text = new StringBuilder(Prefix);
-
-                foreach (var d in table)
-                {
-                    text.Append(d.Key);
-                    text.Append(DIV);
-                    text.Append(d.Value);
-                    text.Append(SPR);
-                }
-
-                return text.ToString();
-            }
+            return text.ToString();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CatSupplement.Cat;
+using CatSupplement.Story;
 
 namespace CatSupplement
 {
@@ -30,9 +31,45 @@ namespace CatSupplement
             soundLoop?.Destroy();
         }
 
+        #region Prototype
+
+        /// <summary>
+        /// Returns text to be displayed instead of Pick up interaction
+        /// </summary>
         protected internal virtual string ControlTutorial()
         {
             return "";
         }
+
+        /// <summary>
+        /// Creates new save data dependent to <see cref="SaveState"/>,
+        /// and is wiped by death or quit.
+        /// </summary>
+        /// <param name="table"></param>
+        protected internal virtual SaveDataTable AppendNewProgSaveData()
+        {
+            return new SaveDataTable();
+        }
+
+        /// <summary>
+        /// Creates new save data dependent to <see cref="SaveState.deathPersistentSaveData"/>,
+        /// which stays with death or quit, but gets wiped with new run.
+        /// </summary>
+        protected internal virtual SaveDataTable AppendNewPersSaveData()
+        {
+            return new SaveDataTable();
+        }
+
+        /// <summary>
+        /// Creates new save data dependent to <see cref="SaveState.miscWorldSaveData"/>,
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        protected internal virtual SaveDataTable AppendNewMiscSaveData()
+        {
+            return new SaveDataTable();
+        }
+
+        #endregion Prototype
     }
 }

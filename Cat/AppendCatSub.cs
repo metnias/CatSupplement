@@ -21,14 +21,6 @@ namespace CatSupplement.Cat
             On.Player.Destroy += DestroyPatch;
         }
 
-        internal static void OnMSCEnablePatch()
-        {
-        }
-
-        internal static void OnMSCDisablePatch()
-        {
-        }
-
         private static SlugName[] AppendTimelineOrder(On.SlugcatStats.orig_getSlugcatTimelineOrder orig)
         {
             LinkedList<SlugName> list = new LinkedList<SlugName>(orig());

@@ -9,7 +9,7 @@ namespace CatSupplement
 {
     public static class SubRegistry
     {
-        private static readonly Dictionary<SlugName, CatSupplement> CatSubPrototype
+        internal static readonly Dictionary<SlugName, CatSupplement> CatSubPrototype
             = new Dictionary<SlugName, CatSupplement>();
 
         private static readonly Dictionary<SlugName, Func<Player, CatSupplement>> CatSubFactory
@@ -36,6 +36,7 @@ namespace CatSupplement
             if (!CatSubPrototype.TryGetValue(name, out sub)) return false;
             return true;
         }
+
 
     }
 }
