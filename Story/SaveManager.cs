@@ -135,7 +135,9 @@ namespace CatSub.Story
         {
             if (persDataTable.TryGetValue(self, out var saveData))
             {
-                UpdatePersSaveData(ref saveData, self, saveAsIfPlayerDied, saveAsIfPlayerQuit);
+                var cloneSaveData = saveData.Clone();
+
+                UpdatePersSaveData(ref cloneSaveData, self, saveAsIfPlayerDied, saveAsIfPlayerQuit);
 
                 var saveDataPos = -1;
                 for (var i = 0; i < self.unrecognizedSaveStrings.Count; i++)
@@ -143,9 +145,9 @@ namespace CatSub.Story
                         saveDataPos = i;
 
                 if (saveDataPos > -1)
-                    self.unrecognizedSaveStrings[saveDataPos] = saveData.ToString();
+                    self.unrecognizedSaveStrings[saveDataPos] = cloneSaveData.ToString();
                 else
-                    self.unrecognizedSaveStrings.Add(saveData.ToString());
+                    self.unrecognizedSaveStrings.Add(cloneSaveData.ToString());
             }
 
             return orig(self, saveAsIfPlayerDied, saveAsIfPlayerQuit);
@@ -241,6 +243,13 @@ namespace CatSub.Story
 
         #endregion MiscData
 
+        public static SaveDataTable Clone(this SaveDataTable table)
+        {
+            var clone = new SaveDataTable();
+            foreach (var pair in table.table)
+                clone.table.Add(pair.Key, pair.Value);
+            return clone;
+        }
     }
 
     public class SaveDataTable

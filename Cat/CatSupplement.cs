@@ -80,8 +80,13 @@ namespace CatSub.Cat
         }
 
         /// <summary>
-        /// Updates death persistant save data for situations like win, or force quit etc.
+        /// Updates clone of <see cref="SaveDataTable"/> dependent to <see cref="SaveState.deathPersistentSaveData"/>
+        /// for situations like force quit
         /// </summary>
+        /// <param name="table">Cloned data table from last cycle</param>
+        /// <param name="data"><see cref="DeathPersistentSaveData"/> instance calling <see cref="DeathPersistentSaveData.SaveToString(bool, bool)"/></param>
+        /// <param name="saveAsIfPlayerDied">Whether this save clone is for death or quit</param>
+        /// <param name="saveAsIfPlayerQuit">Whether this save clone is for quit</param>
         public virtual void UpdatePersSaveData(ref SaveDataTable table, DeathPersistentSaveData data, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
         }
