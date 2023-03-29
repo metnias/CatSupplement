@@ -21,7 +21,7 @@ namespace CatSub.Cat
         private static readonly ConditionalWeakTable<PlayerState, CatSupplement> CatSubs
             = new ConditionalWeakTable<PlayerState, CatSupplement>();
 
-        internal static readonly List<SlugName> OutdatedSlugs = new List<SlugName>();
+        internal static readonly HashSet<string> OutdatedSlugs = new HashSet<string>();
 
         /// <summary>
         /// Register constructor so that this mod will append this to player instances automatically.
@@ -30,7 +30,7 @@ namespace CatSub.Cat
         /// <param name="factory"><c>state => new ExampleCatSupplement(state)</c></param>
         public static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatSupplement, new()
         {
-            if (OutdatedSlugs.Contains(name))
+            if (OutdatedSlugs.Contains(name.value))
             {
                 Debug.LogError("This mod is targeted for outdated CatSupplement!");
                 return;
@@ -40,7 +40,7 @@ namespace CatSub.Cat
                 !SubPlugin.PLUGIN_VERSION.StartsWith(proto.TargetSubVersion))
             {
                 Debug.LogError($"This mod is targeted for outdated CatSupplement!\nTarget: {proto.TargetSubVersion}, Current: {SubPlugin.PLUGIN_VERSION}");
-                OutdatedSlugs.Add(name);
+                OutdatedSlugs.Add(name.value);
                 return;
             }
 

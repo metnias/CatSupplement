@@ -27,7 +27,7 @@ namespace CatSub.Cat
         /// <param name="factory"><c>state => new ExampleCatDecoration(state)</c></param>
         public static void Register<T>(SlugName name, Func<Player, T> factory) where T : CatDecoration, new()
         {
-            if (SubRegistry.OutdatedSlugs.Contains(name))
+            if (SubRegistry.OutdatedSlugs.Contains(name.value))
             {
                 Debug.LogError("This mod is targeted for outdated CatSupplement!");
                 return;
