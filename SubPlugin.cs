@@ -37,7 +37,7 @@ namespace CatSub
             instance = this;
             LogSource = Logger;
 
-            On.RainWorld.OnModsInit += Extras.WrapInit(Init);
+            On.RainWorld.OnModsInit += WrapInit(Init);
         }
 
         private static bool init = false;
@@ -47,38 +47,29 @@ namespace CatSub
 
         private static void Init(RainWorld rw)
         {
-            if (init) return;
-            init = true;
             SaveManager.Patch();
             AppendCatSub.Patch();
             AppendCatDeco.Patch();
 
             instance.Logger.LogMessage("CatSupplement is Intialized.");
         }
-    }
 
-    internal static class Extras
-    {
-        private static bool _initialized;
-
-        public static On.RainWorld.hook_OnModsInit WrapInit(Action<RainWorld> loadResources)
+        private static On.RainWorld.hook_OnModsInit WrapInit(Action<RainWorld> loadResources)
         {
             return (orig, self) =>
             {
                 orig(self);
+                if (init) return;
 
                 try
                 {
-                    if (!_initialized)
-                    {
-                        _initialized = true;
-                        loadResources(self);
-                    }
+                    loadResources(self);
                 }
                 catch (Exception e)
                 {
                     Debug.LogException(e);
                 }
+                init = true;
             };
         }
     }
