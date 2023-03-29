@@ -28,20 +28,21 @@ namespace CatSub.Cat
             while (queue.Count > 0)
             {
                 var p = queue.Dequeue();
+                if (p.name.Index < 0) continue; // unregistered
                 for (int i = 0; i < p.pivots.Length; ++i)
                 {
+                    if (p.pivots[i].Index < 0) continue; // unregistered
                     var node = list.Find(p.pivots[i]);
-                    if (node != null)
-                    {
-                        if (p.order == TimelinePointer.Relative.Before)
-                            list.AddBefore(node, p.name);
-                        else
-                            list.AddAfter(node, p.name);
-                        ++search;
-                        goto LoopEnd;
-                    }
+                    if (node == null) continue;
+
+                    if (p.order == TimelinePointer.Relative.Before)
+                        list.AddBefore(node, p.name);
+                    else
+                        list.AddAfter(node, p.name);
+                    ++search;
+                    goto LoopEnd;
                 }
-                if (p.search > search) continue;
+                if (p.search > search) continue; // give up search
                 p.search = search + 1;
                 queue.Enqueue(p); // re-search
             LoopEnd: continue;
