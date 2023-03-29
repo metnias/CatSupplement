@@ -39,7 +39,7 @@ namespace CatSub.Cat
 
         public virtual void Update(On.Player.orig_Update orig, bool eu)
         {
-            orig(self, eu);
+            orig?.Invoke(self, eu);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace CatSub.Cat
         /// </summary>
         public virtual void Destroy(On.Player.orig_Destroy orig)
         {
-            orig(self);
+            orig?.Invoke(self);
             soundLoop?.Destroy();
         }
 

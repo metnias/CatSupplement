@@ -41,7 +41,7 @@ namespace CatSub.Cat
 
         public virtual void Update(On.PlayerGraphics.orig_Update orig)
         {
-            orig(self);
+            orig?.Invoke(self);
             if (!UpdateZRot) return;
             BackupZRotation();
             Vector2 upDir = Custom.DirVec(self.drawPositions[1, 0], self.drawPositions[0, 0]);
@@ -109,7 +109,7 @@ namespace CatSub.Cat
 
         public virtual void InitiateSprites(On.PlayerGraphics.orig_InitiateSprites orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
         {
-            orig(self, sLeaser, rCam);
+            orig?.Invoke(self, sLeaser, rCam);
 
             if (container != null)
             { container.RemoveAllChildren(); container.RemoveFromContainer(); container = null; }
@@ -119,7 +119,7 @@ namespace CatSub.Cat
 
         public virtual void AddToContainer(On.PlayerGraphics.orig_AddToContainer orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
         {
-            orig(self, sLeaser, rCam, newContatiner);
+            orig?.Invoke(self, sLeaser, rCam, newContatiner);
 
             if (container == null) return;
             if (newContatiner == null) { newContatiner = rCam.ReturnFContainer("Midground"); }
@@ -129,7 +129,7 @@ namespace CatSub.Cat
 
         public virtual void ApplyPalette(On.PlayerGraphics.orig_ApplyPalette orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
         {
-            orig(self, sLeaser, rCam, palette);
+            orig?.Invoke(self, sLeaser, rCam, palette);
 
             bodyColor = sLeaser.sprites[0].color;
             faceColor = sLeaser.sprites[9].color;
@@ -137,7 +137,7 @@ namespace CatSub.Cat
 
         public virtual void DrawSprites(On.PlayerGraphics.orig_DrawSprites orig, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
         {
-            orig(self, sLeaser, rCam, timeStacker, camPos);
+            orig?.Invoke(self, sLeaser, rCam, timeStacker, camPos);
 
             if (player == null || player.room == null || self == null)
             { container.isVisible = false; return; }
@@ -146,14 +146,14 @@ namespace CatSub.Cat
 
         public virtual void SuckedIntoShortCut(On.PlayerGraphics.orig_SuckedIntoShortCut orig, Vector2 shortCutPosition)
         {
-            orig(self, shortCutPosition);
+            orig?.Invoke(self, shortCutPosition);
 
             container.RemoveFromContainer();
         }
 
         public virtual void Reset(On.PlayerGraphics.orig_Reset orig)
         {
-            orig(self);
+            orig?.Invoke(self);
             if (UpdateZRot)
             {
                 for (int i = 0; i < zRot.GetLength(0); i++)
