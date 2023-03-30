@@ -24,10 +24,10 @@ namespace CatSub.Cat
 
         /// <summary>
         /// This is detected with StartsWith.
-        /// <para>1.(major update).(major patch).(minor patch)</para>
-        /// Minor patches won't break compatibility.
+        /// <para>1.(major update).(minor patch).(hotfixes)</para>
+        /// Minor patches may turn stuff obsolete, but won't destroy compatibility.
         /// Major patches may break compatibility, and major updates surely will.
-        /// It's best to write down to major patch number. (e.g. 1.0.0)
+        /// It's best to write down to major update number. (e.g. 1.0)
         /// </summary>
         public abstract string TargetSubVersion { get; }
 
