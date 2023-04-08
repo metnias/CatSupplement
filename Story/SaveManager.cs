@@ -262,11 +262,7 @@ namespace CatSub.Story
         {
         }
 
-        public T GetValue<T>(string key)
-        {
-            if (table.TryGetValue(key, out var value)) return ValueConverter.ConvertToValue<T>(value);
-            return default;
-        }
+        public T GetValue<T>(string key) => ValueConverter.ConvertToValue<T>(table[key]);
 
         public void SetValue<T>(string key, T value)
         {
