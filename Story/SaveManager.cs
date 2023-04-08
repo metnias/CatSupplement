@@ -27,7 +27,6 @@ namespace CatSub.Story
             On.PlayerProgression.MiscProgressionData.ctor += MiscDataCtorPatch;
             On.PlayerProgression.MiscProgressionData.ToString += MiscDataToStringPatch;
             On.PlayerProgression.MiscProgressionData.FromString += MiscDataFromStringPatch;
-
         }
 
         public static readonly string PREFIX = "<CatSubData>";
@@ -42,7 +41,6 @@ namespace CatSub.Story
                 return sub.AppendNewProgSaveData();
             return new SaveDataTable();
         }
-
 
         private static SaveDataTable CreateNewPersSaveData(SlugName slugcat)
         {
@@ -264,7 +262,11 @@ namespace CatSub.Story
         {
         }
 
-        public T GetValue<T>(string key) => ValueConverter.ConvertToValue<T>(table[key]);
+        public T GetValue<T>(string key)
+        {
+            if (table.TryGetValue(key, out var value)) return ValueConverter.ConvertToValue<T>(value);
+            return default;
+        }
 
         public void SetValue<T>(string key, T value)
         {

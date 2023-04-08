@@ -20,36 +20,6 @@ namespace CatSub.Cat
             On.Player.Destroy += DestroyPatch;
         }
 
-        private static SlugName[] AppendTimelineOrder(On.SlugcatStats.orig_getSlugcatTimelineOrder orig)
-        {
-            LinkedList<SlugName> list = new LinkedList<SlugName>(orig());
-            var queue = GetTimelinePointers();
-            int search = 0;
-            while (queue.Count > 0)
-            {
-                var p = queue.Dequeue();
-                if (p.name.Index < 0) continue; // unregistered
-                for (int i = 0; i < p.pivots.Length; ++i)
-                {
-                    if (p.pivots[i].Index < 0) continue; // unregistered
-                    var node = list.Find(p.pivots[i]);
-                    if (node == null) continue;
-
-                    if (p.order == TimelinePointer.Relative.Before)
-                        list.AddBefore(node, p.name);
-                    else
-                        list.AddAfter(node, p.name);
-                    ++search;
-                    goto LoopEnd;
-                }
-                if (p.search > search) continue; // give up search
-                p.search = search + 1;
-                queue.Enqueue(p); // re-search
-            LoopEnd: continue;
-            }
-            return list.ToArray();
-        }
-
         private static void ControlMapPatch(On.Menu.ControlMap.orig_ctor orig, ControlMap map, Menu.Menu menu, MenuObject owner, Vector2 pos, Options.ControlSetup.Preset preset, bool showPickupInstructions)
         {
             orig.Invoke(map, menu, owner, pos, preset, showPickupInstructions);
@@ -60,7 +30,6 @@ namespace CatSub.Cat
             if (!string.IsNullOrEmpty(tutorial))
                 map.pickupButtonInstructions.text = sub.ControlTutorial();
         }
-
 
         #region Player
 
@@ -104,6 +73,5 @@ namespace CatSub.Cat
         }
 
         #endregion Player
-
     }
 }

@@ -1,5 +1,6 @@
 ﻿using RWCustom;
 using System.Collections.Generic;
+using System.Linq;
 using SlugName = SlugcatStats.Name;
 
 namespace CatSub.Story
@@ -7,6 +8,7 @@ namespace CatSub.Story
     public static class StoryRegistry
     {
         #region TimelineOrder
+
         public struct TimelinePointer
         {
             /// <summary>
@@ -49,6 +51,11 @@ namespace CatSub.Story
             { Before, After };
         }
 
+        private static bool isTimelineDirty = true;
+        private static int lastOrigTimelineCount = -1;
+        private static SlugName[] savedTimeline = null;
+
+        internal static void SetTimelineDirty() => isTimelineDirty = true;
 
         private static readonly Dictionary<SlugName, TimelinePointer> timelinePointers
             = new Dictionary<SlugName, TimelinePointer>();
@@ -61,13 +68,69 @@ namespace CatSub.Story
             if (!timelinePointers.ContainsKey(pointer.name))
                 timelinePointers.Add(pointer.name, pointer);
             else timelinePointers[pointer.name] = pointer; // update
+            SetTimelineDirty();
         }
 
+        /// <summary>
+        /// Unregister timeline position for slugcat
+        /// </summary>
         public static void UnregisterTimeline(SlugName name)
-            => timelinePointers.Remove(name);
+        { timelinePointers.Remove(name); SetTimelineDirty(); }
 
-        internal static Queue<TimelinePointer> GetTimelinePointers()
-            => new Queue<TimelinePointer>(timelinePointers.Values);
+        private static Queue<TimelinePointer> GetTimelinePointers()
+        => new Queue<TimelinePointer>(timelinePointers.Values);
+
+        internal static SlugName[] AppendTimelineOrder(On.SlugcatStats.orig_getSlugcatTimelineOrder orig)
+        {
+            var origTimeline = orig();
+            if (lastOrigTimelineCount != origTimeline.Length) { lastOrigTimelineCount = origTimeline.Length; SetTimelineDirty(); }
+            if (!isTimelineDirty) return savedTimeline;
+            LinkedList<SlugName> list = new LinkedList<SlugName>(origTimeline);
+            var queue = GetTimelinePointers();
+            int search = 0;
+            while (queue.Count > 0)
+            {
+                var p = queue.Dequeue();
+                if (p.name.Index < 0) continue; // unregistered
+                for (int i = 0; i < p.pivots.Length; ++i)
+                {
+                    if (p.pivots[i].Index < 0) continue; // unregistered
+                    var node = list.Find(p.pivots[i]);
+                    if (node == null) continue;
+
+                    if (p.order == TimelinePointer.Relative.Before)
+                        list.AddBefore(node, p.name);
+                    else
+                        list.AddAfter(node, p.name);
+                    ++search;
+                    goto LoopEnd;
+                }
+                if (p.search > search) continue; // give up search
+                p.search = search + 1;
+                queue.Enqueue(p); // re-search
+            LoopEnd: continue;
+            }
+            isTimelineDirty = false;
+            return savedTimeline = list.ToArray();
+        }
+
+        /// <summary>
+        /// Checks whether the timeline is in between left and right. (leave one as null for one-sided range)
+        /// </summary>
+        public static bool IsTimelineInbetween(SlugName check, SlugName leftExclusive, SlugName rightExclusive)
+        {
+            var timeline = SlugcatStats.getSlugcatTimelineOrder();
+            int c = -1, l = -1, r = timeline.Length;
+            for (int i = 0; i < timeline.Length; ++i)
+            {
+                if (timeline[i] == check) c = i;
+                if (timeline[i] == leftExclusive) l = i;
+                if (timeline[i] == rightExclusive) r = i;
+            }
+            //Debug.Log($"Timeline Check: {l}<{c}<{r}");
+            return l < c && c < r;
+        }
+
         #endregion TimelineOrder
 
         #region StartPos
@@ -102,6 +165,5 @@ namespace CatSub.Story
         }
 
         #endregion StartPos
-
     }
 }
