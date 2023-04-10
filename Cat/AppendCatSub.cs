@@ -28,7 +28,7 @@ namespace CatSub.Cat
             if (!SubRegistry.TryGetPrototype(rwg.StoryCharacter, out CatSupplement sub)) return;
             string tutorial = sub.ControlTutorial();
             if (!string.IsNullOrEmpty(tutorial))
-                map.pickupButtonInstructions.text = sub.ControlTutorial();
+                map.pickupButtonInstructions.text = tutorial;
         }
 
         #region Player
