@@ -8,7 +8,7 @@ using SlugName = SlugcatStats.Name;
 
 namespace CatSub.Cat
 {
-    internal static class AppendCatSub
+    public static class AppendCatSub
     {
         internal static void Patch()
         {

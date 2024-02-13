@@ -131,6 +131,7 @@ namespace CatSub.Cat
         {
             orig?.Invoke(self, sLeaser, rCam, palette);
 
+            if (sLeaser.sprites == null || sLeaser.sprites.Length <= 9) return;
             bodyColor = sLeaser.sprites[0].color;
             faceColor = sLeaser.sprites[9].color;
         }
