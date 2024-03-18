@@ -1,4 +1,5 @@
 ﻿using RWCustom;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SlugName = SlugcatStats.Name;
@@ -63,6 +64,7 @@ namespace CatSub.Story
         /// <summary>
         /// Register timeline positions for slugcat
         /// </summary>
+        [Obsolete]
         public static void RegisterTimeline(TimelinePointer pointer)
         {
             if (!timelinePointers.ContainsKey(pointer.name))
@@ -74,6 +76,7 @@ namespace CatSub.Story
         /// <summary>
         /// Unregister timeline position for slugcat
         /// </summary>
+        [Obsolete]
         public static void UnregisterTimeline(SlugName name)
         { timelinePointers.Remove(name); SetTimelineDirty(); }
 
@@ -119,13 +122,16 @@ namespace CatSub.Story
         /// </summary>
         public static bool IsTimelineInbetween(SlugName check, SlugName leftExclusive, SlugName rightExclusive)
         {
-            var timeline = SlugcatStats.getSlugcatTimelineOrder();
-            int c = -1, l = -1, r = timeline.Length;
-            for (int i = 0; i < timeline.Length; ++i)
+            var timeline = SlugcatStats.SlugcatTimelineOrder();
+            var cur = timeline.First; int i = 0;
+            int c = -1, l = -1, r = timeline.Count;
+            while (i < timeline.Count)
             {
-                if (timeline[i] == check) c = i;
-                if (timeline[i] == leftExclusive) l = i;
-                if (timeline[i] == rightExclusive) r = i;
+                if (cur.Value == check) c = i;
+                if (cur.Value == leftExclusive) l = i;
+                if (cur.Value == rightExclusive) l = i;
+                ++i;
+                cur = cur.Next;
             }
             //Debug.Log($"Timeline Check: {l}<{c}<{r}");
             return l < c && c < r;
