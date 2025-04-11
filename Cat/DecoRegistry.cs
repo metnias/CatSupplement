@@ -29,15 +29,18 @@ namespace CatSub.Cat
         {
             if (SubRegistry.OutdatedSlugs.Contains(name.value))
             {
-                Debug.LogError("This mod is targeted for outdated CatSupplement!");
+                SubPlugin.LogSource.LogError("This mod is targeted for outdated CatSupplement!");
                 return;
             }
+
+            SubPlugin.LogSource.LogMessage($"Registered {name} CatDeco.");
             CatDecoPrototype.Add(name, new T());
             CatDecoFactory.Add(name, factory);
         }
 
         public static void Unregister(SlugName name)
         {
+            SubPlugin.LogSource.LogMessage($"Unregistered {name} CatDeco.");
             CatDecoPrototype.Remove(name);
             CatDecoFactory.Remove(name);
         }
@@ -47,7 +50,10 @@ namespace CatSub.Cat
             if (!CatDecos.TryGetValue(state, out _)
                 && state.creature.realizedObject is Player player
                 && TryMakeDeco(player, out CatDecoration deco))
+            {
+                Debug.Log($"Added CatDeco to {player.SlugCatClass} ({deco.GetType()})");
                 CatDecos.Add(state, deco);
+            }
         }
 
         public static bool TryMakeDeco<T>(Player player, out T sub) where T : CatDecoration

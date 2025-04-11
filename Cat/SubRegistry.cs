@@ -32,24 +32,26 @@ namespace CatSub.Cat
         {
             if (OutdatedSlugs.Contains(name.value))
             {
-                Debug.LogError("This mod is targeted for outdated CatSupplement!");
+                SubPlugin.LogSource.LogError("This mod is targeted for outdated CatSupplement!");
                 return;
             }
             var proto = new T();
             if (string.IsNullOrEmpty(proto.TargetSubVersion) ||
                 !SubPlugin.PLUGIN_VERSION.StartsWith(proto.TargetSubVersion))
             {
-                Debug.LogError($"This mod is targeted for outdated CatSupplement!\nTarget: {proto.TargetSubVersion}, Current: {SubPlugin.PLUGIN_VERSION}");
+                SubPlugin.LogSource.LogError($"This mod is targeted for outdated CatSupplement!\nTarget: {proto.TargetSubVersion}, Current: {SubPlugin.PLUGIN_VERSION}");
                 OutdatedSlugs.Add(name.value);
                 return;
             }
 
+            SubPlugin.LogSource.LogMessage($"Registered {name} CatSub.");
             CatSubPrototype.Add(name, proto);
             CatSubFactory.Add(name, factory);
         }
 
         public static void Unregister(SlugName name)
         {
+            SubPlugin.LogSource.LogMessage($"Unregistered {name} CatSub.");
             CatSubPrototype.Remove(name);
             CatSubFactory.Remove(name);
         }
@@ -59,7 +61,10 @@ namespace CatSub.Cat
             if (!CatSubs.TryGetValue(state, out _)
                 && state.creature.realizedObject is Player player
                 && TryMakeSub(player, out CatSupplement sub))
+            {
+                Debug.Log($"Added CatSub to {player.SlugCatClass} ({sub.GetType()})");
                 CatSubs.Add(state, sub);
+            }
         }
 
         public static bool TryMakeSub<T>(Player player, out T sub) where T : CatSupplement

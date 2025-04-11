@@ -62,7 +62,7 @@ namespace CatSub.Story
             = new Dictionary<SlugName, TimelinePointer>();
 
         /// <summary>
-        /// Register timeline positions for slugcat
+        /// [Use SlugBase's Timeline feature instead] Register timeline positions for slugcat.
         /// </summary>
         [Obsolete]
         public static void RegisterTimeline(TimelinePointer pointer)
@@ -74,7 +74,7 @@ namespace CatSub.Story
         }
 
         /// <summary>
-        /// Unregister timeline position for slugcat
+        /// [Use SlugBase's Timeline feature instead] Unregister timeline position for slugcat
         /// </summary>
         [Obsolete]
         public static void UnregisterTimeline(SlugName name)
