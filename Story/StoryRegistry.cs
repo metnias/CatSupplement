@@ -54,7 +54,7 @@ namespace CatSub.Story
 
         private static bool isTimelineDirty = true;
         private static int lastOrigTimelineCount = -1;
-        private static SlugName[] savedTimeline = null;
+        private static LinkedList<SlugcatStats.Timeline> savedTimeline = null;
 
         internal static void SetTimelineDirty() => isTimelineDirty = true;
 
@@ -83,28 +83,29 @@ namespace CatSub.Story
         private static Queue<TimelinePointer> GetTimelinePointers()
         => new Queue<TimelinePointer>(timelinePointers.Values);
 
-        internal static SlugName[] AppendTimelineOrder(On.SlugcatStats.orig_getSlugcatTimelineOrder orig)
+        internal static LinkedList<SlugcatStats.Timeline> AppendTimelineOrder(On.SlugcatStats.orig_SlugcatTimelineOrder orig)
         {
             var origTimeline = orig();
-            if (lastOrigTimelineCount != origTimeline.Length) { lastOrigTimelineCount = origTimeline.Length; SetTimelineDirty(); }
+            if (lastOrigTimelineCount != origTimeline.Count) { lastOrigTimelineCount = origTimeline.Count; SetTimelineDirty(); }
             if (!isTimelineDirty) return savedTimeline;
-            LinkedList<SlugName> list = new LinkedList<SlugName>(origTimeline);
+            var list = new LinkedList<SlugcatStats.Timeline>(origTimeline);
             var queue = GetTimelinePointers();
             int search = 0;
             while (queue.Count > 0)
             {
                 var p = queue.Dequeue();
                 if (p.name.Index < 0) continue; // unregistered
+                var pt = SlugcatStats.SlugcatToTimeline(p.name);
                 for (int i = 0; i < p.pivots.Length; ++i)
                 {
                     if (p.pivots[i].Index < 0) continue; // unregistered
-                    var node = list.Find(p.pivots[i]);
+                    var node = list.Find(SlugcatStats.SlugcatToTimeline(p.pivots[i]));
                     if (node == null) continue;
 
                     if (p.order == TimelinePointer.Relative.Before)
-                        list.AddBefore(node, p.name);
+                        list.AddBefore(node, pt);
                     else
-                        list.AddAfter(node, p.name);
+                        list.AddAfter(node, pt);
                     ++search;
                     goto LoopEnd;
                 }
@@ -114,7 +115,7 @@ namespace CatSub.Story
             LoopEnd: continue;
             }
             isTimelineDirty = false;
-            return savedTimeline = list.ToArray();
+            return savedTimeline = list;
         }
 
         /// <summary>
@@ -127,9 +128,9 @@ namespace CatSub.Story
             int c = -1, l = -1, r = timeline.Count;
             while (i < timeline.Count)
             {
-                if (cur.Value == check) c = i;
-                if (cur.Value == leftExclusive) l = i;
-                if (cur.Value == rightExclusive) l = i;
+                if (cur.Value == SlugcatStats.SlugcatToTimeline(check)) c = i;
+                if (cur.Value == SlugcatStats.SlugcatToTimeline(leftExclusive)) l = i;
+                if (cur.Value == SlugcatStats.SlugcatToTimeline(rightExclusive)) l = i;
                 ++i;
                 cur = cur.Next;
             }

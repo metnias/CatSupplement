@@ -13,7 +13,7 @@ namespace CatSub.Cat
         internal static void Patch()
         {
             On.Menu.ControlMap.ctor += ControlMapPatch;
-            On.SlugcatStats.getSlugcatTimelineOrder += AppendTimelineOrder;
+            On.SlugcatStats.SlugcatTimelineOrder += AppendTimelineOrder;
             On.RainWorldGame.ctor += StartGamePatch;
             On.Player.ctor += CtorPatch;
             On.Player.Update += UpdatePatch;
