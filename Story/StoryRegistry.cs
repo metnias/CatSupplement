@@ -1,7 +1,6 @@
 ﻿using RWCustom;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using SlugName = SlugcatStats.Name;
 
 namespace CatSub.Story
@@ -10,6 +9,10 @@ namespace CatSub.Story
     {
         #region TimelineOrder
 
+        /// <summary>
+        /// [Use SlugBase's Timeline feature instead] Unregister timeline position for slugcat
+        /// </summary>
+        [Obsolete]
         public struct TimelinePointer
         {
             /// <summary>
@@ -24,6 +27,7 @@ namespace CatSub.Story
                 this.order = order;
                 this.pivots = pivots;
                 search = 0;
+                throw new NotSupportedException("No longer supported. Use SlugBase's Timeline feature instead.");
             }
 
             /// <summary>
@@ -52,6 +56,7 @@ namespace CatSub.Story
             { Before, After };
         }
 
+        /*
         private static bool isTimelineDirty = true;
         private static int lastOrigTimelineCount = -1;
         private static LinkedList<SlugcatStats.Timeline> savedTimeline = null;
@@ -60,6 +65,7 @@ namespace CatSub.Story
 
         private static readonly Dictionary<SlugName, TimelinePointer> timelinePointers
             = new Dictionary<SlugName, TimelinePointer>();
+        */
 
         /// <summary>
         /// [Use SlugBase's Timeline feature instead] Register timeline positions for slugcat.
@@ -67,10 +73,13 @@ namespace CatSub.Story
         [Obsolete]
         public static void RegisterTimeline(TimelinePointer pointer)
         {
+            throw new NotSupportedException("No longer supported. Use SlugBase's Timeline feature instead.");
+            /*
             if (!timelinePointers.ContainsKey(pointer.name))
                 timelinePointers.Add(pointer.name, pointer);
             else timelinePointers[pointer.name] = pointer; // update
             SetTimelineDirty();
+            */
         }
 
         /// <summary>
@@ -78,8 +87,12 @@ namespace CatSub.Story
         /// </summary>
         [Obsolete]
         public static void UnregisterTimeline(SlugName name)
-        { timelinePointers.Remove(name); SetTimelineDirty(); }
+        {
+            throw new NotSupportedException("No longer supported. Use SlugBase's Timeline feature instead.");
+            //timelinePointers.Remove(name); SetTimelineDirty();
+        }
 
+        /*
         private static Queue<TimelinePointer> GetTimelinePointers()
         => new Queue<TimelinePointer>(timelinePointers.Values);
 
@@ -117,6 +130,7 @@ namespace CatSub.Story
             isTimelineDirty = false;
             return savedTimeline = list;
         }
+        */
 
         /// <summary>
         /// Checks whether the timeline is in between left and right. (leave one as null for one-sided range)
