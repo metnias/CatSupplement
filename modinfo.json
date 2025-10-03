@@ -5,7 +5,7 @@
   "hide_version": false,
   "authors": "topicular",
   "description": "A base mod for custom slugcats I make.",
-  "target_game_version": "v1.10",
+  "target_game_version": "v1.11",
   "tags": [ "Dependency" ],
   "checksum_override_version": false
 }
